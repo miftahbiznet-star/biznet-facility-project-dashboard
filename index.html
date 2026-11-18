@@ -589,7 +589,7 @@ const cadImageStoreKey="biznet-facility-cad-images-v1";
 let cadImageStore={};
 try{const parsed=JSON.parse(localStorage.getItem(cadImageStoreKey)||"{}");if(parsed&&typeof parsed==="object")cadImageStore=parsed}catch(e){}
 
-const BAKED_DRIVE_URL="https://script.google.com/macros/s/AKfycbz2nwQD8AJ3vyW4OFK3G9Q7y8f7NCV94lPhQMTV6Il0uorCypYqVLlCMoCKyEHng0TXLA/exec";
+const BAKED_DRIVE_URL="https://script.google.com/macros/s/AKfycbwnZv8rh0oRio6y09s_7RSG-UXDMUWIXOgmQJjpIO5CbzsxBfiAHRz-rKDfV85ET9gfqg/exec";
 function getDriveUrl(){return BAKED_DRIVE_URL}
 
 const lastPhotoBranchKey="biznet-facility-last-photo-branch-v1";
