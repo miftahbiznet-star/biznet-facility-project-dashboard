@@ -1,0 +1,2707 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BIZNET FACILITY PROJECT REPORT</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{--navy:#0b246b;--navy2:#171b68;--blue:#087dc2;--cyan:#09a9d6;--green:#12865b;--yellow:#f3b323;--ink:#182637;--muted:#718096;--line:#e3eaf1;--bg:#f2f6fa;--shadow:0 8px 24px rgba(23,27,104,.08)}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:13px Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);background-image:linear-gradient(#087dc206 1px,transparent 1px),linear-gradient(90deg,#087dc206 1px,transparent 1px);background-size:24px 24px}
+.sidebar{position:fixed;inset:0 auto 0 0;z-index:5;width:238px;padding:20px 16px;color:#fff;background:linear-gradient(180deg,var(--navy2),#101448);border-right:3px solid var(--cyan)}
+.logo-frame{overflow:hidden;border-radius:10px;background:#fff}.brand-logo-img{display:block;width:100%;height:auto}
+.brand-logo{display:block;width:100%;height:auto}
+.brand-caption{margin:10px 3px 25px;color:#b9ebfa;font-size:10px;font-weight:800;letter-spacing:2px;line-height:1.5}
+.nav-label{margin:0 10px 10px;color:#9db2c7;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+.nav button{display:flex;width:100%;gap:12px;align-items:center;margin:4px 0;padding:12px;border:0;border-radius:10px;background:transparent;color:#d8e3ed;text-align:left;font:inherit;cursor:pointer}
+.nav button:hover,.nav button.active{color:white;background:#09a9d632;box-shadow:inset 3px 0 var(--cyan)}
+.nav-icon{width:19px;text-align:center}
+main{margin-left:238px;padding:25px 28px 45px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px}
+.eyebrow{color:var(--muted);font-size:10px;font-weight:750;letter-spacing:1px}
+h1{margin:4px 0;color:var(--navy);font-size:23px;letter-spacing:-.5px}
+.date-chip{padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#526579;font-size:11px}
+.sync-chip{padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#526579;font-size:11px;font-weight:700}
+.sync-chip[data-state="ok"]{color:var(--green);border-color:#cfe8db}
+.sync-chip[data-state="pending"]{color:#ad7900}
+.sync-chip[data-state="err"]{color:#c23b3b;border-color:#f0d3d1}
+.page{display:none}.page.active{display:block}
+.page-title{margin:0 0 5px;color:var(--navy);font-size:19px}.page-subtitle{margin:0 0 16px;color:var(--muted);font-size:12px}
+.grid{display:grid;gap:15px}.overview-grid{grid-template-columns:minmax(0,2fr) minmax(250px,1fr)}
+.card{padding:17px;border:1px solid var(--line);border-top:3px solid #dceef6;border-radius:14px;background:#fff;box-shadow:var(--shadow)}
+.map-card{padding:0;overflow:hidden}.map-head{padding:16px 17px 11px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:13px}
+.section-head h2{margin:0;font-size:14px}.small-muted{color:var(--muted);font-size:10px}
+.export-bar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:15px;border-top-color:var(--cyan)}
+.map-frame{display:block;width:100%;height:320px;border:0;background:#eaf3f8}
+#mapLeaflet{position:relative;z-index:1}
+.map-legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:9px 15px 0;color:var(--muted);font-size:10px;font-weight:750}
+.map-pin{display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:50%;vertical-align:-1px}
+.leaflet-popup-content{font:11px Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45;margin:10px 12px}
+.pop-meta{display:block;color:var(--muted);font-size:9.5px;margin-top:2px}
+.pop-meta a{color:var(--blue);font-weight:750}
+.map-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 15px;color:var(--muted);font-size:10px}
+.map-link,.button{display:inline-block;padding:8px 11px;border:0;border-radius:8px;background:var(--blue);color:white;text-decoration:none;font:inherit;font-size:10px;font-weight:750;cursor:pointer;white-space:nowrap}
+.button.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.button.danger{background:#c2453b}
+.kpi-stack{display:grid;gap:12px}.kpi{display:flex;min-height:120px;flex-direction:column;justify-content:center}
+.kpi-label{color:var(--muted);font-size:11px;font-weight:750}.kpi-value{margin:9px 0 5px;font-size:32px;font-weight:850;letter-spacing:-1px;line-height:1}
+.kpi-hint{color:var(--muted);font-size:10px}.kpi.green .kpi-value{color:var(--green)}.kpi.yellow .kpi-value{color:#ad7900}.kpi.blue .kpi-value{color:var(--blue)}
+/* ==== Tambahan: blok kecil jumlah renovasi 100% di kartu KPI TOTAL PROJECT DONE
+   (hanya jumlah branch, tanpa daftar nama) ==== */
+.kpi-extra{margin-top:10px;padding-top:8px;border-top:1px dashed #cfd9e4;width:100%}
+.kpi-extra-label{color:var(--muted);font-size:8.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+.kpi-extra-count{margin-top:3px;font-size:11px;font-weight:800;color:var(--green)}
+.area-summary-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:14px}.area-summary-card{padding:15px}
+.area-summary-title{margin:0 0 12px;color:var(--navy);font-size:13px;font-weight:850}
+.area-summary-row{display:flex;justify-content:space-between;gap:8px;margin:9px 0 5px;font-size:10px}
+.area-summary-label{color:var(--muted)}.area-summary-value{font-weight:800;white-space:nowrap}.area-summary-value.progress{color:#ad7900}.area-summary-value.done{color:var(--green)}.area-summary-value.planning{color:#768391}
+.track{height:7px;overflow:hidden;border-radius:20px;background:#edf2f7}.fill{height:100%;border-radius:20px;background:var(--blue)}
+.fill.green{background:var(--green)}.fill.yellow{background:var(--yellow)}.fill.gray{background:#b6c4d2}.area-summary-card .track{height:5px;margin-bottom:9px}
+/* ==== REVISI 3: daftar branch per status dalam kartu rekap area (maks 5 baris + scroll) ==== */
+.area-lists{display:grid;gap:9px;margin-top:12px;border-top:1px dashed #cfd9e4;padding-top:10px}
+.area-list-label{margin-bottom:4px;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.area-list-label.lp{color:#768391}.area-list-label.lo{color:#ad7900}.area-list-label.ls{color:var(--green)}
+.area-list-rows{max-height:106px;overflow-y:auto;border:1px solid var(--line);border-radius:7px;background:#fbfdff}
+.area-list-item{padding:4px 8px;border-bottom:1px solid #edf1f4;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.area-list-item:last-child{border-bottom:0}
+.area-list-item.empty-item{color:var(--muted)}
+.search-card{margin-top:14px}.result-row{display:grid;grid-template-columns:minmax(170px,1.3fr) repeat(4,minmax(85px,.6fr)) minmax(110px,1fr);gap:10px;align-items:center;padding:11px 7px;border-top:1px solid var(--line)}
+.result-name{color:var(--navy);font-weight:750}.result-meta{display:block;margin-top:4px;color:var(--muted);font-size:9px;font-weight:500}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,select,textarea{padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:11px}
+input[type=search]{min-width:190px}.table-wrap{max-height:68vh;overflow:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{position:sticky;top:0;z-index:1;padding:9px 7px;background:#f5f8fb;color:var(--muted);font-size:9px;letter-spacing:.35px;text-align:left;text-transform:uppercase;white-space:nowrap}
+td{padding:8px 7px;border-bottom:1px solid #edf1f4;vertical-align:middle}tbody tr:hover{background:#f7fbfd}
+td select{max-width:150px;padding:6px 7px;font-size:10px}
+td input[type=text]{max-width:165px;min-width:120px;width:100%;padding:6px 8px;font-size:10px}
+td input[type=date]{max-width:150px;min-width:120px;padding:6px 7px;font-size:10px}
+td .submit-row-btn{padding:6px 9px;font-size:10px;white-space:nowrap}
+.branch-cell{min-width:190px;font-weight:750}.meta{display:block;margin-top:3px;color:var(--muted);font-size:9px;font-weight:500}
+.cad-notes-cell{min-width:130px}
+.badge{display:inline-block;padding:4px 7px;border-radius:20px;font-size:9px;font-weight:750;white-space:nowrap}
+.badge.done{background:#e7f6ee;color:var(--green)}.badge.progress{background:#fff5d9;color:#936400}.badge.none{background:#f0f3f6;color:#768391}
+.badge.blue{background:#e6f4fb;color:var(--blue)}.badge.red{background:#fbe9e7;color:#c23b3b}
+.empty{padding:22px;color:var(--muted);text-align:center}
+.docs-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.upload-heading{margin-bottom:9px;color:var(--navy);font-size:11px;font-weight:800}
+.upload-box{position:relative;display:grid;width:100%;aspect-ratio:3/4;place-items:center;overflow:hidden;border:1px dashed #aebdca;border-radius:12px;background:#f8fbfd;text-align:center}
+.upload-box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.upload-content{position:relative;z-index:1;padding:12px}
+.upload-box.has-image .upload-content{padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.9)}
+.upload-icon{margin-bottom:7px;color:var(--blue);font-size:24px}.upload-title{margin-bottom:5px;color:var(--navy);font-size:11px;font-weight:800}
+.upload-hint{color:var(--muted);font-size:9px}.upload-box input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.recent-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.recent-photo{position:relative;margin:0;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#fff}
+.recent-photo img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
+.recent-photo figcaption{padding:7px 9px;font-size:9px;line-height:1.45}
+.recent-photo figcaption strong{display:block;color:var(--navy);font-size:10px}
+.recent-photo figcaption span{color:var(--muted)}
+.recent-del{position:absolute;top:6px;right:6px;z-index:2;padding:3px 8px;border:0;border-radius:14px;background:rgba(23,38,55,.72);color:#fff;font:inherit;font-size:9px;font-weight:800;cursor:pointer}
+.recent-del:hover{background:#c2453b}
+.form-msg{color:var(--muted);font-size:10px;font-weight:600}
+.form-msg.ok{color:var(--green)}.form-msg.err{color:#c23b3b}
+.item-editor{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.item-field{padding:11px;border:1px solid var(--line);border-radius:9px;background:#fbfdff}
+.item-field label{display:block;margin-bottom:7px;color:var(--navy);font-size:10px;font-weight:800}
+.item-field select,.item-field textarea{width:100%}.item-field textarea{min-height:66px;resize:vertical;line-height:1.4}
+.item-field input{width:100%}
+.item-percent{display:flex;justify-content:space-between;align-items:center;margin-top:7px;color:var(--muted);font-size:9px}
+.item-percent strong{color:var(--blue);font-size:11px}
+.report-help{margin-top:12px;padding:11px 12px;border:1px solid #d8e8f3;border-radius:9px;background:#f6fbff;color:#526579;font-size:10px;line-height:1.55}
+.report-controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.report-controls select{min-width:240px}
+.branch-picker{position:relative;width:min(360px,100%)}
+.branch-picker input{width:100%}
+.branch-results{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:10;max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:9px;background:#fff;box-shadow:var(--shadow)}
+.branch-results:empty{display:none}
+.branch-result{display:block;width:100%;padding:9px 11px;border:0;border-bottom:1px solid var(--line);background:#fff;text-align:left;cursor:pointer}
+.branch-result:last-child{border-bottom:0}
+.branch-result:hover{background:#f2f8fc}
+.branch-result strong,.branch-result span{display:block}
+.branch-result strong{color:var(--navy);font-size:11px}
+.branch-result span{margin-top:3px;color:var(--muted);font-size:9px}
+.branch-more{cursor:default;color:var(--muted);font-size:9px;font-weight:600}
+.branch-more:hover{background:#fff}
+.branch-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.branch-form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.submit-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px dashed #cfd9e4}
+.custom-branch-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fbfdff;font-size:11px}
+.report-summary h3{margin:16px 0 8px;color:var(--navy);font-size:12px}
+.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kum-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.kum-card{padding:10px;border:1px solid var(--line);border-radius:9px;background:#fbfdff}
+.kum-card strong{display:block;color:var(--muted);font-size:9px;font-weight:800;text-transform:uppercase}
+.kum-card span{display:block;margin-top:4px;color:var(--blue);font-size:12px;font-weight:850}
+.kum-card.total{border-color:var(--blue);background:#eef7fd}.kum-card.total span{color:var(--navy)}
+.mini-photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.mini-photo{aspect-ratio:3/4;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#f8fbfd;color:var(--muted);font-size:9px;text-align:center;padding:6px}
+.mini-photo img{width:100%;height:100%;object-fit:cover}
+.dash-extra-grid{grid-template-columns:minmax(0,3fr) minmax(330px,2fr);margin-top:15px}
+.done-chart{display:flex;align-items:flex-end;gap:12px;min-height:230px;padding:24px 4px 0;overflow-x:auto}
+.chart-col{display:flex;flex:1;min-width:58px;flex-direction:column;align-items:center;gap:7px}
+.chart-bars{display:flex;align-items:flex-end;gap:7px;height:160px}
+.chart-bar{position:relative;width:24px;min-height:3px;border-radius:6px 6px 2px 2px}
+.bar-done{background:var(--green)}
+.chart-bar span{position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;color:var(--ink);white-space:nowrap}
+.chart-year{max-width:80px;color:var(--muted);font-size:9px;font-weight:750;text-align:center;line-height:1.25}
+.chart-legend{display:flex;gap:16px;align-items:center;margin-top:12px;color:var(--muted);font-size:10px;font-weight:750}
+.legend-swatch{display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:3px;vertical-align:-1px}
+.swatch-done{background:var(--green)}
+/* ==== REVISI 2: rekap project Done per tahun — satu branch = satu baris,
+   maks ±5 baris terlihat, sisanya digulir di dalam kotak; kepala grup tahun sticky ==== */
+.milestone-recap{margin-top:12px;border-top:1px dashed #cfd9e4;padding-top:10px}
+.milestone-recap-title{color:var(--navy);font-size:10px;font-weight:800;letter-spacing:.5px}
+.milestone-recap-list{margin-top:7px;max-height:162px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;background:#fbfdff}
+.milestone-group-head{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 10px;background:#e6f2fa;border-bottom:1px solid #d5e6f2;font-size:10px;font-weight:850;color:var(--navy)}
+.milestone-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 10px;border-bottom:1px solid #edf1f4;font-size:10px}
+.milestone-row:last-child{border-bottom:0}
+.milestone-row:hover{background:#f2f8fc}
+.milestone-row-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.milestone-row-count{flex:0 0 auto;font-weight:850;color:var(--green);white-space:nowrap}
+.milestone-recap-total{margin-top:7px;padding:7px 10px;border:1px solid #cfe8db;border-radius:8px;background:#f0faf4;color:var(--green);font-size:10px;font-weight:800}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calendar-dow{padding:4px 0;color:var(--muted);font-size:9px;font-weight:800;text-align:center;text-transform:uppercase}
+.calendar-cell{position:relative;min-height:38px;padding:4px 3px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:10px;font-weight:700;text-align:center}
+.calendar-cell.empty{border-color:transparent;background:transparent}
+.calendar-cell.today{border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)}
+.calendar-cell.has-event{cursor:pointer}
+.calendar-cell.has-start{background:#eef7fd}
+.calendar-cell.has-deadline{background:#fff5d9}
+.calendar-cell.has-start.has-deadline{background:linear-gradient(135deg,#eef7fd 50%,#fff5d9 50%)}
+.calendar-cell.selected{outline:2px solid var(--blue);outline-offset:-2px}
+.cal-dots{position:absolute;bottom:4px;left:0;right:0;display:flex;justify-content:center;gap:3px}
+.cal-dot{display:inline-block;width:7px;height:7px;border-radius:50%}
+.dot-start{background:var(--blue)}.dot-deadline{background:#c2453b}
+.calendar-legend{display:flex;gap:16px;align-items:center;margin-top:10px;color:var(--muted);font-size:10px;font-weight:750}
+.calendar-legend .cal-dot{margin-right:5px;vertical-align:-1px}
+.reminder-row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:9px 2px;border-top:1px solid var(--line);font-size:10px}
+.reminder-branch{color:var(--navy);font-weight:750}
+.reminder-right{text-align:right;white-space:nowrap}
+.reminder-date{display:inline-block;margin-left:5px;color:var(--muted);font-size:9px;font-weight:600}
+.reminder-chip{display:inline-block;margin-top:3px;padding:2px 7px;border-radius:12px;font-size:9px;font-weight:750}
+.chip-today{background:#fff5d9;color:#936400}
+.chip-upcoming{background:#e6f4fb;color:var(--blue)}
+.chip-ongoing{background:#e7f6ee;color:var(--green)}
+.chip-past{background:#fbe9e7;color:#c23b3b}
+.cad-entry{border:1px solid var(--line);border-radius:12px;background:#fff;padding:0;margin-top:12px;overflow:hidden}
+.cad-entry-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 13px;background:#f4f9fc;border-bottom:1px solid var(--line)}
+.cad-entry-title{display:flex;gap:9px;align-items:center}
+.cad-entry-title strong{color:var(--navy);font-size:11.5px}
+.cad-entry-body{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:13px;padding:13px}
+.cad-entry-info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start}
+.cad-entry-info .item-field.cad-full{grid-column:span 2}
+.cad-entry-work{display:flex;flex-direction:column;min-width:0}
+.cad-work-field{display:flex;flex-direction:column;flex:1}
+.cad-upload{position:relative;display:grid;place-items:center;overflow:hidden;border:1px dashed #aebdca;border-radius:12px;background:#f8fbfd;aspect-ratio:4/3;cursor:pointer;text-align:center;padding:10px;margin-top:2px;flex:1}
+.cad-upload img,.cad-pdf-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:0}
+.cad-upload input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.cad-upload-hint{position:relative;z-index:1;color:var(--muted);font-size:9px;font-weight:700;background:rgba(255,255,255,.85);padding:5px 8px;border-radius:8px}
+.cad-upload.has-pdf .cad-upload-hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:2}
+.cad-file-meta{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--muted);font-size:9.5px;font-weight:700;background:#f6fbff;border:1px solid #d8e8f3;border-radius:8px;padding:7px 9px;line-height:1.4}
+/* ==== REVISI 4: status otomatis CAD ==== */
+.cad-status-line{margin-bottom:5px}
+.cad-status-hint{display:block;color:var(--muted);font-size:9px;line-height:1.45}
+.pic-total-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fbfdff}
+.pic-total-bar strong{color:var(--navy)}
+.pic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:12px}
+.pic-card{display:flex;flex-direction:column;gap:10px;padding:13px;border:1px solid var(--line);border-top:3px solid var(--cyan);border-radius:12px;background:#fff;box-shadow:var(--shadow)}
+.pic-card-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pic-card-head h4{margin:0;color:var(--navy);font-size:12.5px;line-height:1.3}
+.pic-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.pic-stat{padding:9px 10px;border-radius:9px;background:#fbfdff;border:1px solid var(--line)}
+.pic-stat strong{display:block;font-size:20px;font-weight:850;line-height:1.1}
+.pic-stat span{display:block;margin-top:3px;color:var(--muted);font-size:9px;font-weight:800;text-transform:uppercase}
+.pic-stat.op{border-color:#d3e9f7;background:#f0f8fd}.pic-stat.op strong{color:var(--blue)}
+.pic-stat.dn{border-color:#cfe8db;background:#f0faf4}.pic-stat.dn strong{color:var(--green)}
+.pic-branches-label{color:var(--muted);font-size:9px;font-weight:800;text-transform:uppercase;margin-bottom:2px}
+.pic-branch-line{padding:5px 0;border-top:1px solid #edf1f4}
+.pic-branch-line strong{color:var(--navy);font-size:10px}
+.pic-branch-line .meta{margin-top:2px}
+@media(max-width:1000px){.sidebar{width:200px}main{margin-left:200px;padding:20px}.overview-grid{grid-template-columns:1fr}.dash-extra-grid{grid-template-columns:1fr}.kpi-stack{grid-template-columns:repeat(3,1fr)}.area-summary-grid,.docs-grid,.branch-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kum-grid,.info-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.sidebar{position:static;width:auto;padding:12px}.logo-frame{max-width:280px}.brand-caption{margin:7px 3px 12px}.nav{display:flex;overflow:auto}.nav-label{display:none}.nav button{width:auto;flex:0 0 auto;padding:10px;font-size:11px}main{margin:0;padding:15px 11px 25px}.topbar{align-items:flex-start}h1{font-size:18px}.date-chip{font-size:9px}.sync-chip{font-size:9px}.kpi-stack{grid-template-columns:1fr}.area-summary-grid,.docs-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.recent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{align-items:flex-start;flex-direction:column}.result-row{grid-template-columns:1fr 1fr}.item-editor{grid-template-columns:repeat(2,minmax(0,1fr))}.cad-entry-body{grid-template-columns:1fr}input[type=search]{min-width:140px}.map-frame{height:240px}.branch-picker{width:100%}.kum-grid,.info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mini-photos{grid-template-columns:repeat(2,minmax(0,1fr))}.export-bar{align-items:flex-start;flex-direction:column}}
+@media(max-width:430px){.area-summary-grid,.docs-grid,.item-editor,.branch-form-grid{grid-template-columns:1fr}.recent-grid{grid-template-columns:1fr}.kum-grid,.info-grid{grid-template-columns:1fr}.cad-entry-info{grid-template-columns:1fr}.cad-entry-info .item-field.cad-full{grid-column:auto}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo-frame">
+    <img id="brandLogoImg" class="brand-logo-img" alt="Logo Biznet">
+    <svg id="brandLogoFallback" class="brand-logo" style="display:none" viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Biznet">
+      <defs>
+        <linearGradient id="bizMark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#35b5ea"/>
+          <stop offset=".5" stop-color="#1279c6"/>
+          <stop offset="1" stop-color="#1b3f96"/>
+        </linearGradient>
+      </defs>
+      <rect width="760" height="300" fill="#fff"/>
+      <g fill="none" stroke="url(#bizMark)" stroke-linecap="round">
+        <path d="M210 54 C128 40 76 88 74 150 C72 216 128 254 202 246" stroke-width="32"/>
+        <path d="M210 54 C262 64 286 98 277 130 C268 160 236 172 196 168" stroke-width="32"/>
+        <path d="M196 168 C252 163 292 190 285 222 C278 250 238 256 202 246" stroke-width="32"/>
+      </g>
+      <text x="322" y="206" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="134" font-weight="800" fill="#1f1a5e" letter-spacing="-3">Biznet</text>
+      <text x="714" y="100" font-family="Arial,sans-serif" font-size="26" font-weight="700" fill="#1f1a5e">®</text>
+    </svg>
+  </div>
+  <script>
+  /* Logo otomatis adaptif: mencoba beberapa nama file logo yang mungkin ada
+     di repo (logo-biznet.png, logo-biznet.png.jpg, logo-biznet.jpg, logo-biznet.jpeg).
+     Bila salah satu berhasil dimuat, logo asli dipakai di sidebar & PDF;
+     bila semuanya gagal, logo SVG cadangan yang tampil. */
+  const LOGO_CANDIDATES=["logo-biznet.png","logo-biznet.png.jpg","logo-biznet.jpg","logo-biznet.jpeg"];
+  let logoOkSrc="";
+  (function tryLogo(i){
+    const img=document.getElementById("brandLogoImg");
+    if(!img)return;
+    if(i>=LOGO_CANDIDATES.length){
+      img.style.display="none";
+      const fb=document.getElementById("brandLogoFallback");
+      if(fb)fb.style.display="block";
+      return;
+    }
+    img.onload=()=>{logoOkSrc=LOGO_CANDIDATES[i];img.dataset.ok="1"};
+    img.onerror=()=>tryLogo(i+1);
+    img.src=LOGO_CANDIDATES[i];
+  })(0);
+  </script>
+  <div class="brand-caption">FACILITY PROJECT<br>CONTROL DASHBOARD</div>
+  <div class="nav-label">Project Report</div>
+  <nav class="nav">
+    <button class="active" data-page="overview"><span class="nav-icon">▦</span>Dashboard Project</button>
+    <button data-page="info"><span class="nav-icon">▤</span>Informasi Project</button>
+    <button data-page="cad"><span class="nav-icon">◫</span>CAD</button>
+    <button data-page="progress"><span class="nav-icon">◷</span>Progress Renovasi Project</button>
+    <button data-page="docs"><span class="nav-icon">▧</span>Dokumentasi Project</button>
+    <button data-page="weekly"><span class="nav-icon">▣</span>Weekly Report Project</button>
+  </nav>
+</aside>
+
+<main>
+<header class="topbar">
+  <div><div class="eyebrow">FACILITY &amp; CONSTRUCTION</div><h1 id="heading">BIZNET FACILITY PROJECT REPORT</h1></div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+    <span id="syncChip" class="sync-chip" data-state="pending">☁ Mengambil data bersama…</span>
+    <span class="date-chip">Project Control Board</span>
+  </div>
+</header>
+
+<section id="overview" class="page active">
+  <div class="card export-bar">
+    <div><h2 style="margin:0;font-size:14px">Download All Data</h2><div class="small-muted" style="margin-top:4px">Ekspor seluruh data dashboard ke 1 file Excel (.xls). Data tersimpan bersama di Google Sheet — semua orang melihat &amp; mengedit data yang sama, dan dashboard menarik data terbaru otomatis setiap 60 detik.</div></div>
+    <button id="downloadAllDataButton" class="button" type="button">⬇ Download All Data (Excel)</button>
+  </div>
+  <div class="grid overview-grid">
+    <article class="card map-card">
+      <div class="map-head">
+        <div class="section-head"><h2>Mapping Plan Project</h2><span class="badge blue">PETA SEMUA BRANCH</span></div>
+        <div class="small-muted">Semua branch yang sudah diisi Latitude &amp; Longitude (halaman Informasi Project) tampil sebagai pin berwarna sesuai status — klik pin untuk detail &amp; progress, cari branch di bawah untuk memfokuskan peta.</div>
+      </div>
+      <div id="mapLeaflet" class="map-frame" title="Peta semua branch"></div>
+      <div class="map-legend"><span><i class="map-pin" style="background:#12865b"></i>Done</span><span><i class="map-pin" style="background:#f3b323"></i>On Progress</span><span><i class="map-pin" style="background:#768391"></i>Planning</span></div>
+      <div class="map-foot"><span id="mapCaption">Memuat peta semua branch…</span><a id="mapOpenLink" class="map-link" href="https://maps.google.com/maps?q=Indonesia" target="_blank" rel="noopener">Buka peta ↗</a></div>
+    </article>
+    <div class="kpi-stack">
+      <article class="card kpi green"><div class="kpi-label">TOTAL PROJECT DONE</div><div class="kpi-value" id="doneCount">—</div><div class="kpi-hint">Total Progress Kumulatif 100%</div>
+        <div class="kpi-extra"><div class="kpi-extra-label">Renovasi Konstruksi 100% (tanpa kumulatif)</div><div class="kpi-extra-count"><span id="renovDoneCount">—</span> branch</div></div>
+      </article>
+      <article class="card kpi yellow"><div class="kpi-label">TOTAL PROJECT ON PROGRESS</div><div class="kpi-value" id="progressCount">—</div><div class="kpi-hint">Belum 100% kumulatif (termasuk 0%)</div></article>
+      <article class="card kpi blue"><div class="kpi-label">TOTAL PROJECT</div><div class="kpi-value" id="totalCount">—</div><div class="kpi-hint">Branch bernama dalam daftar</div></article>
+    </div>
+  </div>
+  <div class="grid dash-extra-grid">
+    <article class="card chart-card">
+      <div class="section-head"><div><h2>MILESTONE PROJECT</h2><div class="small-muted">Perbandingan jumlah project Done untuk setiap tahun data.</div></div><span class="badge done">DONE / TAHUN</span></div>
+      <div id="milestoneChart" class="done-chart"></div>
+      <div class="chart-legend"><span><i class="legend-swatch swatch-done"></i>Project Done</span></div>
+      <div class="small-muted" style="margin-top:8px">Done = Total Progress Kumulatif 100% — Renovasi Konstruksi (berbobot), Perangkat Networks, Project Backbone, dan SPOP Live semuanya selesai. Branch tanpa Tahun dikelompokkan tersendiri.</div>
+      <div class="milestone-recap">
+        <div class="milestone-recap-title">REKAP PROJECT DONE PER TAHUN <span class="small-muted" style="font-weight:600">· setiap branch 1 baris · maks 5 baris terlihat — gulir ke bawah di dalam kotak untuk melihat seluruh daftar</span></div>
+        <div id="milestoneRecapList" class="milestone-recap-list"></div>
+        <div id="milestoneRecapTotal" class="milestone-recap-total"></div>
+      </div>
+    </article>
+    <article class="card calendar-card">
+      <div class="section-head"><div><h2>Kalender Reminder Project</h2><div class="small-muted">Klik tanggal bertanda pada kalender untuk melihat schedule Start Renovasi &amp; Deadline di hari tersebut — list hanya muncul saat tanggal dipilih.</div></div>
+        <div class="toolbar">
+          <button id="calReset" class="button ghost" type="button" style="display:none">Reset tanggal</button>
+          <button id="calPrev" class="button ghost" type="button" aria-label="Bulan sebelumnya">‹</button>
+          <strong id="calLabel" style="color:var(--navy);font-size:11px;min-width:108px;text-align:center">—</strong>
+          <button id="calNext" class="button ghost" type="button" aria-label="Bulan berikutnya">›</button>
+        </div>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+      <div class="calendar-legend"><span><i class="cal-dot dot-start"></i>Start Renovasi</span><span><i class="cal-dot dot-deadline"></i>Deadline</span></div>
+      <div id="reminderFilterNote" class="small-muted" style="display:none;margin-top:8px;font-weight:750"></div>
+      <div id="reminderList" style="margin-top:6px"></div>
+    </article>
+  </div>
+  <div class="section-head" style="margin:19px 0 0">
+    <div><h2>Rekap branch berdasarkan area dan status</h2><span class="small-muted" id="rekapYearNote">Persentase dihitung terhadap jumlah branch pada area · setiap kartu memuat daftar branch per status (maks 5 baris terlihat — gulir untuk selengkapnya)</span></div>
+    <div class="toolbar"><label class="small-muted" for="rekapYearStart" style="font-weight:750">Rekap mulai tahun</label><select id="rekapYearStart"></select></div>
+  </div>
+  <div id="areaSummary" class="grid area-summary-grid"></div>
+  <div class="card search-card">
+    <div class="section-head">
+      <div><h2>Cari progress kumulatif branch</h2><div class="small-muted">Klik atau arahkan kursor ke kolom pencarian untuk memunculkan daftar branch, lalu pilih untuk melihat progres Renovasi, Networks, Backbone, SPOP Live, dan total. Peta di atas otomatis memfokuskan ke branch terpilih.</div></div>
+      <div class="branch-picker">
+        <input id="overviewBranchSearch" type="search" placeholder="Contoh: Malang Kepanjen">
+        <div id="overviewBranchResults" class="branch-results"></div>
+      </div>
+    </div>
+    <div id="overviewBranchResult" class="search-results">Masukkan nama branch untuk melihat progress.</div>
+  </div>
+</section>
+
+<section id="info" class="page">
+  <h2 class="page-title">Informasi Project</h2>
+  <p class="page-subtitle">Daftar branch, input branch baru, edit informasi branch, pra-konstruksi, serta tanggal Start Renovasi &amp; Deadline yang dapat diisi langsung pada tabel.</p>
+  <div class="card">
+    <div class="section-head">
+      <div><h2>Input Branch Baru</h2><div class="small-muted">Branch baru otomatis masuk ke rekap, tabel, pencarian, dokumentasi, weekly report, dan peta. Kolom Tahun tidak diisi di sini — atur Tahun lewat kolom Tahun pada tabel Pra-Konstruksi &amp; Informasi Project di bawah.</div></div>
+    </div>
+    <div class="branch-form-grid">
+      <div class="item-field"><label for="newBranchName">Nama Branch *</label><input id="newBranchName" type="text" placeholder="Contoh: Biznet Branch Contoh Kota"></div>
+      <div class="item-field"><label for="newBranchArea">Area *</label><input id="newBranchArea" list="areaOptions" placeholder="EAST / WEST / SUMATRA"><datalist id="areaOptions"></datalist></div>
+      <div class="item-field"><label for="newBranchRo">Regional Office</label><input id="newBranchRo" type="text" placeholder="Contoh: RO 25"></div>
+      <div class="item-field"><label for="newBranchCost">Cost Center</label><input id="newBranchCost" type="text" placeholder="Contoh: 3301"></div>
+      <div class="item-field"><label for="newBranchLat">Latitude</label><input id="newBranchLat" type="number" step="any" inputmode="decimal" placeholder="Contoh: -7.982808"></div>
+      <div class="item-field"><label for="newBranchLng">Longitude</label><input id="newBranchLng" type="number" step="any" inputmode="decimal" placeholder="Contoh: 112.630282"></div>
+    </div>
+    <div class="branch-form-actions">
+      <button id="addBranchButton" class="button" type="button">＋ Tambah Branch</button>
+      <span id="inputBranchMessage" class="form-msg">Isi Latitude &amp; Longitude agar pin branch langsung tampil di peta Mapping Plan Project. Data tersimpan bersama di Google Sheet.</span>
+    </div>
+    <div id="customBranchList"></div>
+  </div>
+  <div class="card" style="margin-top:15px">
+    <div class="section-head">
+      <div><h2>Edit Informasi Branch</h2><div class="small-muted">Klik atau arahkan kursor ke pencarian untuk memunculkan daftar branch. Ubah Nama Branch, Area, Regional Office, Cost Center, Tahun, serta Latitude &amp; Longitude. Setelah Simpan Informasi, pin lokasi langsung diperbarui di peta Mapping Plan Project. Tersimpan bersama di Google Sheet.</div></div>
+    </div>
+    <div class="report-controls">
+      <div class="branch-picker">
+        <input id="editBranchSearch" type="search" placeholder="Cari branch yang sudah ada" autocomplete="off">
+        <div id="editBranchResults" class="branch-results"></div>
+      </div>
+    </div>
+    <div id="editBranchSelected" class="small-muted" style="margin-top:8px">Cari dan pilih branch untuk mengedit informasinya.</div>
+    <div id="branchInfoEditor" class="branch-form-grid" style="display:none;margin-top:12px">
+      <div class="item-field"><label for="editBranchName">Nama Branch</label><input id="editBranchName" type="text" placeholder="Nama branch"></div>
+      <div class="item-field"><label for="editBranchArea">Area</label><input id="editBranchArea" list="areaOptions" placeholder="EAST / WEST / SUMATRA"></div>
+      <div class="item-field"><label for="editBranchRo">Regional Office</label><input id="editBranchRo" type="text" placeholder="Contoh: RO 25"></div>
+      <div class="item-field"><label for="editBranchCost">Cost Center</label><input id="editBranchCost" type="text" placeholder="Contoh: 3301"></div>
+      <div class="item-field"><label for="editBranchTahun">Tahun</label><input id="editBranchTahun" type="number" inputmode="numeric" placeholder="Contoh: 2026"></div>
+      <div class="item-field"><label for="editLat">Latitude</label><input id="editLat" type="number" step="any" inputmode="decimal" placeholder="Contoh: -7.982808"></div>
+      <div class="item-field"><label for="editLng">Longitude</label><input id="editLng" type="number" step="any" inputmode="decimal" placeholder="Contoh: 112.630282"></div>
+    </div>
+    <div id="branchInfoActions" class="branch-form-actions" style="display:none">
+      <button id="saveBranchInfoButton" class="button" type="button">Simpan Informasi</button>
+      <button id="viewBranchInfoMapButton" class="button ghost" type="button">Lihat di Peta</button>
+      <button id="cancelBranchInfoButton" class="button ghost" type="button">Batal</button>
+      <span id="branchInfoMessage" class="form-msg"></span>
+    </div>
+  </div>
+  <div class="card" style="margin-top:15px">
+    <div class="section-head">
+      <div><h2>Pra-Konstruksi &amp; Informasi Project</h2><div class="small-muted">Tahun, Ruko, Survey/Aanwijzing, Negosiasi, PR/PO, Start Renovasi, Deadline: otomatis tersimpan saat diganti (klik kolom tanggal untuk memilih dari kalender). Nomor PO &amp; PIC: ketik, otomatis tersimpan saat berpindah kolom. Kolom Keterangan Gambar (di samping Survey/Aanwijzing) terisi otomatis dari Status Gambar otomatis halaman CAD — cukup "Done" atau "On Progress". Setelah selesai mengedit satu branch, klik ⬆ Submit Data di sebelah kanan barisnya untuk memperbarui ke dashboard bersama.</div></div>
+      <div class="toolbar">
+        <div class="branch-picker">
+          <input id="infoSearch" type="search" placeholder="Cari / pilih branch, RO, cost center" autocomplete="off">
+          <div id="infoBranchResults" class="branch-results"></div>
+        </div>
+        <select id="infoSort"><option value="priority">Prioritas progress</option><option value="source">Urutan sumber</option><option value="name">Nama branch A–Z</option></select>
+      </div>
+    </div>
+    <div class="table-wrap"><table id="infoTable"></table></div>
+  </div>
+</section>
+
+<section id="cad" class="page">
+  <h2 class="page-title">CAD</h2>
+  <p class="page-subtitle">Data request gambar kerja CAD per branch: tanggal request, tanggal update, nama PIC, keterangan progress, 1 file PDF gambar kerja per data (maks 6 MB), dan kolom Revisi/Comment dari user. Status Gambar terisi OTOMATIS: file PDF baru diupload tanpa comment user → Done; ada comment user setelah upload → On Progress (perlu revisi). File PDF terkirim ke folder Google Drive saat Submit Data, dilengkapi catatan tanggal upload/diperbarui serta rekap per PIC dalam bentuk kartu.</p>
+  <div class="card">
+    <div class="section-head">
+      <div><h2>Data CAD Branch</h2><div class="small-muted">Klik atau arahkan kursor ke pencarian untuk memunculkan daftar branch, lalu pilih branch untuk mengelola data CAD. Status Gambar OTOMATIS: PIC mengupload PDF baru → menunggu review (Done bila tidak ada comment); user menulis Revisi/Comment setelah upload → otomatis On Progress; comment dihapus/kosong → kembali Done; upload revisi baru → comment lama tidak berlaku (kembali Done). Teks, tanggal &amp; comment tersimpan bersama di Google Sheet; file PDF gambar kerja (maks 6 MB) disimpan di browser ini &amp; terkirim ke Google Drive saat Submit Data. Setelah selesai mengedit, klik ⬆ Submit Data di bawah.</div></div>
+      <div class="branch-picker">
+        <input id="cadBranchSearch" type="search" placeholder="Cari Branch, RO, atau Cost Center" autocomplete="off">
+        <div id="cadBranchResults" class="branch-results"></div>
+      </div>
+    </div>
+    <div id="cadSelected" class="small-muted" style="margin-top:8px">Belum ada branch dipilih.</div>
+    <div id="cadEditor"></div>
+    <div class="submit-bar">
+      <button id="cadSubmitButton" class="button" type="button">⬆ Submit Data</button>
+      <span id="cadSubmitMessage" class="form-msg">Setelah selesai mengedit/merevisi data branch ini, klik Submit Data — data diperbarui ke dashboard bersama &amp; file PDF terkirim ke Google Drive.</span>
+    </div>
+  </div>
+  <div class="card" style="margin-top:15px">
+    <div class="section-head"><div><h2>Rekap PIC CAD</h2><div class="small-muted">Satu PIC satu kotak kartu: nama, jumlah On Progress, Total Done, dan daftar branch yang sudah dikerjakan. Terbentuk otomatis dari data CAD (Nama PIC &amp; Status Gambar otomatis).</div></div><span class="badge blue">KARTU PER PIC</span></div>
+    <div id="cadSummary"></div>
+  </div>
+</section>
+
+<section id="progress" class="page">
+  <h2 class="page-title">Progress Renovasi Project</h2>
+  <p class="page-subtitle">Isi progress item renovasi per branch, dilengkapi Progress Kumulatif Project yang diisi manual. Setelah selesai mengedit, klik ⬆ Submit Data di bawah editor item atau di bawah editor kumulatif.</p>
+  <div class="card">
+    <div class="section-head"><div><h2>Input Persentase Progress Item</h2><div class="small-muted">Status item diterjemahkan menjadi persentase dan kontribusi berbobot. Setelah selesai mengedit, klik ⬆ Submit Data di bawah editor.</div></div></div>
+    <div class="report-controls">
+      <div class="branch-picker">
+        <input id="progressBranchSearch" type="search" placeholder="Cari Branch, RO, atau Cost Center" autocomplete="off" aria-label="Cari branch">
+        <div id="progressBranchResults" class="branch-results"></div>
+        <div id="progressBranchSelected" class="small-muted">Belum ada branch dipilih.</div>
+      </div>
+    </div>
+    <div id="progressEditorMessage" class="report-help">Cari dan pilih branch untuk melihat atau mengubah status item progress.</div>
+    <div id="progressItemEditor" class="item-editor" style="margin-top:12px"></div>
+    <div id="progressTotal" class="report-help">Total progress berbobot: —</div>
+    <div class="submit-bar">
+      <button id="progressSubmitItemButton" class="button" type="button">⬆ Submit Data</button>
+      <span id="progressSubmitItemMessage" class="form-msg">Setelah selesai mengedit item progress branch ini, klik Submit Data untuk memperbaruinya ke dashboard bersama.</span>
+    </div>
+  </div>
+  <div class="card" style="margin-top:15px">
+    <div class="section-head"><div><h2>Progress Kumulatif Project</h2><div class="small-muted">Isi manual status Perangkat Networks, Project Backbone, dan SPOP Live. Tersimpan bersama di Google Sheet.</div></div></div>
+    <div id="kumulatifEditor" class="item-editor"></div>
+    <div class="submit-bar">
+      <button id="progressSubmitButton" class="button" type="button">⬆ Submit Data</button>
+      <span id="progressSubmitMessage" class="form-msg">Setelah selesai mengedit progress branch ini (item renovasi + kumulatif), klik Submit Data untuk memperbaruinya ke dashboard bersama.</span>
+    </div>
+  </div>
+</section>
+
+<section id="docs" class="page">
+  <h2 class="page-title">Dokumentasi Project</h2>
+  <p class="page-subtitle">Pilih branch, unggah 4 foto dokumentasi (rasio portrait 3:4), lalu klik ⬆ Submit Data — foto asli terkirim ke Google Drive dan foto terakhir tiap branch tampil tajam di dashboard semua pengguna (kompresi otomatis kualitas tertinggi yang aman untuk sinkronisasi).</p>
+  <div class="card">
+    <div class="section-head">
+      <div><h2>Upload Dokumentasi Branch</h2><div class="small-muted">Pratinjau disimpan di browser ini (1080 × 1440 px); saat Submit Data, foto asli terkirim ke Google Drive dan salinan tampilan kualitas tinggi (hingga 600 × 800 px) disinkronkan — sehingga unggahan terbaru langsung terlihat TAJAM oleh semua pengguna di galeri "Foto Terakhir Diunggah". PENTING: foto yang diunggah dengan versi lama dapat ditingkatkan kualitasnya — setelah memakai versi ini, klik sekali ⬆ Submit Data pada branch terkait (foto tidak perlu dipilih ulang).</div></div>
+      <div class="branch-picker">
+        <input id="docsBranchSearch" type="search" placeholder="Cari Branch, RO, atau Cost Center" autocomplete="off">
+        <div id="docsBranchResults" class="branch-results"></div>
+        <div id="docsBranchSelected" class="small-muted">Belum ada branch dipilih.</div>
+      </div>
+    </div>
+    <div id="docsGrid" class="grid docs-grid"></div>
+    <div class="submit-bar">
+      <button id="submitDocsButton" class="button" type="button">⬆ Submit Data</button>
+      <span id="submitDocsMessage" class="form-msg">Setelah selesai mengunggah foto branch ini, klik Submit Data — foto terkirim ke Google Drive &amp; salinan kualitas tinggi tersinkron agar tajam di semua pengguna.</span>
+    </div>
+  </div>
+  <div class="card" style="margin-top:15px">
+    <div class="section-head"><div><h2 id="recentUploadsTitle">Foto Terakhir Diunggah</h2><div class="small-muted">Galeri hanya menampilkan foto terakhir dari branch yang dipilih — contoh: buka branch Singkawang, yang tampil adalah foto terakhir unggahan Singkawang (per area: Facade, Store, SPOP, Office) lengkap dengan tanggal upload. Kualitas tampilan di semua perangkat kini TINGGI (kompresi adaptif otomatis: resolusi &amp; kualitas dimaksimalkan sampai batas aman Google Sheet, biasanya 400×533 – 600×800 px). Pembaruan terlihat oleh SEMUA pengguna via Google Sheet; foto asli penuh ada di Google Drive. Bila belum ada branch dipilih, galeri otomatis menampilkan branch dengan unggahan terakhir. Tombol ✕ menghapus foto dari tampilan semua pengguna (foto asli di Drive tidak ikut terhapus).</div></div><span class="badge blue">GALERI BRANCH · KUALITAS TINGGI</span></div>
+    <div id="recentUploads" class="recent-grid"></div>
+  </div>
+</section>
+
+<section id="weekly" class="page">
+  <h2 class="page-title">Weekly Report Project</h2>
+  <p class="page-subtitle">Laporan kalkulasi Progress Renovasi Project dan Dokumentasi Project, siap dicetak ke PDF.</p>
+  <div class="card">
+    <div class="section-head"><div><h2>Ringkasan Laporan Branch</h2><div class="small-muted">Cari dan pilih branch untuk melihat ringkasan laporan beserta dokumentasinya, lalu cetak ke PDF.</div></div></div>
+    <div class="report-controls">
+      <div class="branch-picker">
+        <input id="weeklyBranchSearch" type="search" placeholder="Cari Branch, RO, atau Cost Center" autocomplete="off" aria-label="Cari branch">
+        <div id="weeklyBranchResults" class="branch-results"></div>
+        <div id="weeklyBranchSelected" class="small-muted">Belum ada branch dipilih.</div>
+      </div>
+      <button id="downloadWeeklyReport" class="button" type="button">Download PDF</button>
+    </div>
+    <div id="weeklySummary" class="report-summary" style="margin-top:12px"></div>
+  </div>
+</section>
+</main>
+
+<script>
+const rawBranches=`
+Biznet Branch Jembrana Mendoyo|EAST|BALI 3|2717
+Biznet New Office Technovillage|WEST|RO 18|2215
+Biznet Branch Palembang Talang Kelapa|SUMATRA|RO 02|1710
+Biznet Branch Deli Serdang Bangun Sari|SUMATRA|RO 01|120A
+Biznet Branch Deli Serdang Lubuk Pakam|SUMATRA|RO 01|120B
+Biznet Branch Sei Rampah|SUMATRA|RO 01|120D
+Biznet Branch Tebing Tinggi Badak Bejuang|SUMATRA|RO 01|1214
+Biznet Branch Labuan Batu Utara Aek Kanopan|SUMATRA|RO 01|1218
+Biznet Branch Jembrana Pekutatan|EAST|BALI 3|2722
+Biznet Branch Bengkalis Duri|SUMATRA|RO 15|1406
+Biznet Branch Malang Dampit|EAST|RO 10|2638
+Biznet Branch Banjarbaru Loktabat Selatan|WEST|RO 23|3202
+Biznet Branch Tabanan Kota|EAST|BALI 3|271E
+Biznet Branch Buleleng Seririt|EAST|BALI 3|2725
+Biznet Branch Sukoharjo Wirogunan|EAST|RO 21|2428
+Biznet Branch Pekanbaru Tengkerang Timur|SUMATRA|RO 15|1408
+Biznet Branch Mempawah Hilir|WEST|RO 03|3008
+Biznet Branch Tabanan Pupuan|EAST|BALI 3|2723
+Biznet Branch Tabanan Penebel|EAST|BALI 3|2724
+Expand Tanah MPOP Karawang Tanjung Pakis|WEST|RO 04|211D
+Biznet Branch Dumai|SUMATRA|RO 15|1407
+Biznet Branch Bekasi Telajung|WEST|RO 04|223D
+Biznet Branch Bedagai Perbaungan|SUMATRA|RO 01|120C
+Biznet Branch Batubara Indrapura|SUMATRA|RO 01|1215
+Biznet Branch Indragiri Hilir Keritang|SUMATRA|RO 15|1409
+Biznet Branch Cianjur Cipanas|WEST|RO 18|2239
+Biznet Branch Semarang Ungaran|EAST|RO 07|2403
+Biznet Branch Denpasar Sanur (Expand)|EAST|BALI 2|2709
+Biznet Branch Bandung Gedebage|WEST|RO 05|2210
+Biznet Branch Tanah Laut Pelaihari|WEST|RO 23|3209
+Biznet Branch Tabanan Megati|EAST|BALI 3|271B
+Biznet Head Office Champa|EAST|HOBL|270D
+Biznet Data Center Champa|EAST|HOBL|270D
+Biznet Branch Labuan Batu Rantau Prapat|SUMATRA|RO 01|120E
+Biznet Branch Labuan Batu Selatan Kota Pinang|SUMATRA|RO 01|120F
+Biznet Branch Pelalawan Ukui Satu|SUMATRA|RO 15|140B
+Biznet Branch Indragiri Hulu Pematang Reba|SUMATRA|RO 15|140A
+Biznet Branch Siak Kandis Kota|SUMATRA|RO 15|1405
+Biznet Branch Tegal Slawi|EAST|RO 20|2423
+Biznet MarinePOP Buleleng Kubutambahan|EAST|BALI 3|271F
+Biznet Branch Pemalang Migrasi|EAST|RO 21|2407
+Biznet Branch Padang Panjang|SUMATRA|RO 15|1309
+Biznet Branch Tanjung Balai|SUMATRA|RO 01|1217
+Biznet Branch Simalungun Parapat|SUMATRA|RO 01|121B
+Biznet Branch Toba Balige|SUMATRA|RO 01|121C
+Biznet Branch Tapanuli Utara Siborong Borong|SUMATRA|RO 01|121D
+Biznet Branch Tapanuli Utara Tarutung|SUMATRA|RO 01|121E
+Biznet Branch Sibolga|SUMATRA|RO 01|121F
+Biznet Branch Bukit Tinggi|SUMATRA|RO 15|1308
+Biznet Branch Ogan Ilir Indralaya|SUMATRA|RO 02|1718
+Biznet Branch Prabumulih|SUMATRA|RO 02|1717
+Biznet Warehouse Bengkulu|SUMATRA|RO 16|
+Biznet Branch Mempawah Sungai Pinyuh|WEST|RO 03|300A
+Biznet Branch Kapuas Kualakapuas|WEST|RO 23|3102
+Biznet Branch Pulang Pisau|WEST|RO 23|3103
+Biznet Branch Karawang Kosambi|WEST|RO 04|223F
+Biznet Branch Karawang Klari|WEST|RO 04|223E
+Biznet Branch Bogor Citeureup|WEST|RO 18|2220
+Biznet Branch Tangerang Cikupa (Migrasi)|WEST|RO 06|2302
+Biznet Branch Boyolali|EAST|RO 21|2425
+Biznet Warehouse Sleman Banyuraden|EAST|RO 08|2503
+Biznet Branch Malang Kepanjen|EAST|RO 10|2617
+Biznet Branch Jakarta Kebagusan City|WEST|RO 03|211E
+Biznet Branch Sleman Tirtomartani|EAST|RO 08|2506
+Biznet Branch Asahan Kisaran|SUMATRA|RO 01|1216
+Biznet Branch Rokan Hilir Bagan Batu|SUMATRA|RO 01|121A
+Biznet Branch Rokan Hilir Ujung Tanjung|SUMATRA|RO 15|140E
+Biznet Branch Kampar Bangkinang|SUMATRA|RO 15|140F
+Biznet Branch Lima Puluh Kota Baharu|SUMATRA|RO 15|1305
+Biznet Branch Lima Puluh Kota Sarilamak|SUMATRA|RO 15|1306
+Biznet Branch Payakumbuh|SUMATRA|RO 15|1307
+Biznet Branch Padang Pariaman Parit Malintang Sicincin|SUMATRA|RO 15|130A
+Biznet Branch Pariaman|SUMATRA|RO 15|130B
+Biznet Branch Batam Piayu|SUMATRA|RO 14|150C
+Biznet Branch Banjar Gambut|WEST|RO 23|3204
+Biznet Branch Palangkaraya|WEST|RO 23|3101
+Biznet Branch Singkawang|WEST|RO 03|3009
+Biznet Branch Sambas Pemangkat|WEST|RO 03|300B
+Biznet Branch Sambas Durian|WEST|RO 03|3006
+Biznet Branch Sambas Aruk|WEST|RO 03|3007
+Biznet Branch Bekasi Jaka Setia|WEST|RO 04|2225
+Biznet Branch Expand Bekasi Jatimulya|WEST|RO 04|221B
+Biznet Branch Bogor Dayeuh|WEST|RO 18|221C
+`.trim();
+
+const baseProjects=rawBranches.split("\n").map((line,index)=>{
+  const [branch,area,ro,cost]=line.split("|");
+  return {id:index+1,branch,area,ro,cost};
+});
+const projects=[];
+const yearOptions=Array.from({length:2034-2000+1},(_,i)=>2000+i);
+
+const items=[
+  {key:"facade",label:"Area Facade",weight:8},
+  {key:"store",label:"Area Store",weight:16},
+  {key:"inventory",label:"Area Inventory",weight:8},
+  {key:"toilet",label:"Area Toilet",weight:8},
+  {key:"office",label:"Area Office",weight:16},
+  {key:"spop",label:"Area SPOP",weight:16},
+  {key:"upgradeDaya",label:"Upgrade Daya",weight:8},
+  {key:"genset",label:"Commissioning Genset",weight:8},
+  {key:"airConditioner",label:"Air Conditioner",weight:12}
+];
+const statusOptions=["None","On Progress 1","On Progress 2","On Progress 3","Done"];
+const statusPercent={"None":0,"On Progress 1":25,"On Progress 2":50,"On Progress 3":75,"Done":100};
+const kumulatifDefs=[
+  {key:"networks",label:"Progress Perangkat Networks",options:["None","On Delivery","On Site","Installed"],percent:{"None":0,"On Delivery":33.33,"On Site":66.67,"Installed":100}},
+  {key:"backbone",label:"Progress Project Backbone",options:["None","On Progress","Done"],percent:{"None":0,"On Progress":50,"Done":100}},
+  {key:"spopLive",label:"Progress SPOP Live",options:["None","On Progress","Live"],percent:{"None":0,"On Progress":50,"Live":100}}
+];
+function kumulatifPercent(key,status){
+  const def=kumulatifDefs.find(d=>d.key===key);
+  return def?(def.percent[status]??0):0;
+}
+const worksheetStatus={
+  "Biznet Branch Kapuas Kualakapuas":{inventory:"Done"},
+  "Biznet Branch Tangerang Cikupa (Migrasi)":{facade:"Done",inventory:"Done",toilet:"Done",office:"Done",spop:"On Progress 3",upgradeDaya:"Done",genset:"On Progress 3",airConditioner:"On Progress 3"},
+  "Biznet Warehouse Sleman Banyuraden":{facade:"On Progress 1",store:"On Progress 1",inventory:"On Progress 1",toilet:"On Progress 1",office:"On Progress 1",spop:"On Progress 1",upgradeDaya:"On Progress 1",genset:"On Progress 1",airConditioner:"On Progress 1"},
+  "Biznet Branch Malang Kepanjen":{facade:"On Progress 2",store:"On Progress 2",inventory:"On Progress 2",toilet:"On Progress 1",office:"On Progress 2",spop:"On Progress 2",upgradeDaya:"On Progress 1",genset:"On Progress 2",airConditioner:"On Progress 2"},
+  "Biznet Branch Jakarta Kebagusan City":{facade:"On Progress 3",store:"On Progress 2",inventory:"On Progress 3",toilet:"On Progress 2",office:"On Progress 1",spop:"On Progress 1",upgradeDaya:"On Progress 3",genset:"On Progress 2",airConditioner:"On Progress 3"},
+  "Biznet Branch Sleman Tirtomartani":{facade:"On Progress 1",store:"On Progress 1",inventory:"On Progress 1",toilet:"On Progress 1",office:"On Progress 1",spop:"On Progress 1",upgradeDaya:"On Progress 1",genset:"On Progress 1",airConditioner:"On Progress 1"},
+  "Biznet Branch Rokan Hilir Bagan Batu":{facade:"On Progress 1",store:"Done",inventory:"On Progress 1",toilet:"Done",office:"On Progress 3",spop:"Done",upgradeDaya:"Done",genset:"Done",airConditioner:"On Progress 3"},
+  "Biznet Branch Rokan Hilir Ujung Tanjung":{facade:"None",store:"Done",inventory:"Done",toilet:"Done",office:"Done",spop:"Done",upgradeDaya:"Done",genset:"Done",airConditioner:"Done"},
+  "Biznet Branch Kampar Bangkinang":{facade:"Done",store:"On Progress 3",inventory:"On Progress 2",toilet:"On Progress 2",office:"On Progress 3",spop:"Done",upgradeDaya:"Done",genset:"Done",airConditioner:"Done"},
+  "Biznet Branch Pariaman":{facade:"On Progress 1",store:"On Progress 3",inventory:"On Progress 1",toilet:"Done",office:"On Progress 3",spop:"On Progress 3",upgradeDaya:"Done",genset:"Done",airConditioner:"Done"},
+  "Biznet Branch Batam Piayu":{facade:"On Progress 1",store:"On Progress 1",inventory:"None",toilet:"On Progress 1",office:"None",spop:"On Progress 1",upgradeDaya:"None",genset:"None",airConditioner:"None"},
+  "Biznet Branch Bekasi Jaka Setia":{facade:"Done",store:"Done",inventory:"Done",toilet:"Done",office:"Done",spop:"Done",upgradeDaya:"Done",genset:"Done",airConditioner:"Done"}
+};
+
+const storageKey="biznet-facility-weekly-progress-v2";
+const notesKey="biznet-facility-weekly-notes-v1";
+const photoStoreKey="biznet-facility-docs-v2";
+let progressStore={},weeklyNotes={},photoStore={};
+try{progressStore=JSON.parse(localStorage.getItem(storageKey)||"{}")||{}}catch(e){}
+try{weeklyNotes=JSON.parse(localStorage.getItem(notesKey)||"{}")||{}}catch(e){}
+try{photoStore=JSON.parse(localStorage.getItem(photoStoreKey)||"{}")||{}}catch(e){}
+
+/* ===== SALINAN TAMPILAN FOTO BERSAMA (sinkron via Google Sheet) =====
+   Foto asli (1080×1440) tersimpan di browser pengunggah & Google Drive.
+   Agar semua pengguna melihat foto terakhir tiap branch TAJAM, disiapkan
+   salinan tampilan dengan KOMPRESI ADAPTIF: resolusi & kualitas dicoba dari
+   yang tertinggi (600×800, q80) dan diturunkan bertahap hanya bila melewati
+   batas aman Google Sheet (±50.000 karakter per sel). Hasil tipikal
+   400×533 – 600×800 px, jauh lebih tajam daripada thumbnail lama 240×320. */
+const thumbPrefix="biznet-facility-doc-thumb-";
+const THUMB_MAX_CHARS=44000;
+const THUMB_SIZES=[[600,800],[480,640],[400,533],[320,427],[240,320]];
+const THUMB_QUALITIES=[0.8,0.7,0.6,0.5,0.42,0.35];
+const sharedThumbs={};
+function thumbStorageKey(key){return thumbPrefix+key}
+function loadSharedThumbs(){
+  Object.keys(sharedThumbs).forEach(k=>delete sharedThumbs[k]);
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.indexOf(thumbPrefix)===0){
+      const logical=k.slice(thumbPrefix.length);
+      try{const v=JSON.parse(localStorage.getItem(k));if(v&&typeof v==="object")sharedThumbs[logical]=v}catch(e){}
+    }
+  }
+}
+function saveThumbLocal(key,entry){
+  sharedThumbs[key]=entry;
+  try{localStorage.setItem(thumbStorageKey(key),JSON.stringify(entry))}catch(e){}
+}
+
+const customBranchKey="biznet-facility-custom-branches-v1";
+let customBranches=[];
+try{const parsed=JSON.parse(localStorage.getItem(customBranchKey)||"[]");if(Array.isArray(parsed))customBranches=parsed}catch(e){}
+
+const branchEditsKey="biznet-facility-branch-edits-v1";
+let branchEdits={};
+try{const parsed=JSON.parse(localStorage.getItem(branchEditsKey)||"{}");if(parsed&&typeof parsed==="object")branchEdits=parsed}catch(e){}
+
+const infoStoreKey="biznet-facility-info-v1";
+let infoStore={};
+try{const parsed=JSON.parse(localStorage.getItem(infoStoreKey)||"{}");if(parsed&&typeof parsed==="object")infoStore=parsed}catch(e){}
+
+const manualKumulatifKey="biznet-facility-kumulatif-manual-v1";
+let manualKumulatif={};
+try{const parsed=JSON.parse(localStorage.getItem(manualKumulatifKey)||"{}");if(parsed&&typeof parsed==="object")manualKumulatif=parsed}catch(e){}
+
+const cadStoreKey="biznet-facility-cad-v1";
+let cadStore={};
+try{const parsed=JSON.parse(localStorage.getItem(cadStoreKey)||"{}");if(parsed&&typeof parsed==="object")cadStore=parsed}catch(e){}
+
+const cadImageStoreKey="biznet-facility-cad-images-v1";
+let cadImageStore={};
+try{const parsed=JSON.parse(localStorage.getItem(cadImageStoreKey)||"{}");if(parsed&&typeof parsed==="object")cadImageStore=parsed}catch(e){}
+/* PDF besar (di atas kuota browser) disimpan sementara di memori sesi ini —
+   salinan permanen tetap ada di Google Drive setelah Submit Data */
+const cadMemoryStore={};
+
+const BAKED_DRIVE_URL="https://script.google.com/macros/s/AKfycbwnZv8rh0oRio6y09s_7RSG-UXDMUWIXOgmQJjpIO5CbzsxBfiAHRz-rKDfV85ET9gfqg/exec";
+function getDriveUrl(){return BAKED_DRIVE_URL}
+
+const lastPhotoBranchKey="biznet-facility-last-photo-branch-v1";
+function getLastPhotoBranchId(){try{const v=localStorage.getItem(lastPhotoBranchKey);return v?Number(v):null}catch(e){return null}}
+function setLastPhotoBranch(id){try{localStorage.setItem(lastPhotoBranchKey,String(id))}catch(e){}markSync([lastPhotoBranchKey])}
+
+/* ===== SINKRONISASI DATA BERSAMA (Google Sheet via Apps Script) ===== */
+const SYNC_STORE_KEYS=[storageKey,notesKey,customBranchKey,branchEditsKey,infoStoreKey,manualKumulatifKey,cadStoreKey];
+const syncChipEl=document.getElementById("syncChip");
+let syncTimer=null,syncBusy=false;
+let lastSyncState="pending";
+const syncQueue=new Set();
+function setSyncState(state,text){lastSyncState=state;if(!syncChipEl)return;syncChipEl.textContent=text;syncChipEl.dataset.state=state}
+function markSync(keys){if(!keys||!keys.length)return;keys.forEach(k=>syncQueue.add(k));setSyncState("pending","☁ Menyimpan ke Google Sheet…");clearTimeout(syncTimer);syncTimer=setTimeout(flushSync,900)}
+function collectQueueData(){
+  const data={};
+  syncQueue.forEach(k=>{
+    const raw=localStorage.getItem(k);
+    if(raw===null){data[k]=null;return}
+    try{data[k]=JSON.parse(raw)}catch(e){data[k]=raw}
+  });
+  syncQueue.clear();
+  return data;
+}
+async function flushSync(){
+  if(!syncQueue.size||syncBusy)return;
+  const data=collectQueueData();
+  syncBusy=true;
+  try{
+    const res=await fetch(BAKED_DRIVE_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"save",data})});
+    const json=await res.json();
+    if(json.status==="ok")setSyncState("ok","☁ Data bersama tersinkron · "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));
+    else setSyncState("err","⚠ Gagal sinkron — data tetap aman di browser");
+  }catch(e){setSyncState("err","⚠ Offline — data tersimpan lokal")}
+  syncBusy=false;
+  if(syncQueue.size)flushSync();
+}
+function waitSyncIdle(timeout=10000){
+  return new Promise(resolve=>{
+    const t0=Date.now();
+    const check=()=>{
+      if(!syncQueue.size&&!syncBusy)return resolve(lastSyncState==="ok");
+      if(Date.now()-t0>timeout)return resolve(lastSyncState==="ok");
+      setTimeout(check,150);
+    };
+    check();
+  });
+}
+async function submitStores(keys,scopeLabel,msgEl,branchName){
+  if(msgEl){msgEl.textContent="⏳ Mensubmit data ke dashboard…";msgEl.className="form-msg"}
+  markSync(keys);
+  const ok=await waitSyncIdle();
+  if(!msgEl)return;
+  if(ok){
+    msgEl.textContent=`✅ Data ${scopeLabel}${branchName?` (branch: ${branchName})`:""} tersubmit ke dashboard (Google Sheet) — langsung terlihat oleh semua pengguna.`;
+    msgEl.className="form-msg ok";
+  }else{
+    msgEl.textContent="⚠ Submit belum terkirim (offline/gagal). Data tetap aman di browser dan akan dikirim ulang otomatis.";
+    msgEl.className="form-msg err";
+  }
+}
+async function pullRemote(silent){
+  if(!silent)setSyncState("pending","☁ Mengambil data bersama…");
+  try{
+    const res=await fetch(BAKED_DRIVE_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"load"})});
+    const json=await res.json();
+    if(json.status!=="ok"||!json.data)throw new Error("gagal memuat");
+    const d=json.data;let changed=false;
+    SYNC_STORE_KEYS.forEach(k=>{
+      if(d[k]&&typeof d[k]==="object"){localStorage.setItem(k,JSON.stringify(d[k]));changed=true}
+    });
+    /* salinan tampilan foto bersama: kunci apa pun yang berawalan thumbPrefix */
+    Object.keys(d).forEach(k=>{
+      if(k.indexOf(thumbPrefix)===0&&d[k]&&typeof d[k]==="object"){localStorage.setItem(k,JSON.stringify(d[k]));changed=true}
+    });
+    if(d[lastPhotoBranchKey]!==undefined&&d[lastPhotoBranchKey]!==null){localStorage.setItem(lastPhotoBranchKey,String(d[lastPhotoBranchKey]));changed=true}
+    if(changed)reloadStoresFromLocalStorage();
+    setSyncState("ok","☁ Data bersama tersinkron · diperbarui "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));
+  }catch(e){setSyncState("err","⚠ Offline — data tersimpan lokal")}
+}
+function initRemoteSync(){pullRemote()}
+/* Pembaruan otomatis tiap 60 detik — dilewati bila sedang mengetik/menyimpan */
+function autoRefreshTick(){
+  if(syncBusy||syncQueue.size)return;
+  const ae=document.activeElement;
+  if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"||ae.tagName==="SELECT"))return;
+  pullRemote(true);
+}
+setInterval(autoRefreshTick,60000);
+window.addEventListener("beforeunload",()=>{
+  if(!syncQueue.size)return;
+  const data=collectQueueData();
+  try{navigator.sendBeacon(BAKED_DRIVE_URL,new Blob([JSON.stringify({action:"save",data})],{type:"text/plain;charset=utf-8"}))}catch(e){}
+});
+function reloadStoresFromLocalStorage(){
+  try{progressStore=JSON.parse(localStorage.getItem(storageKey)||"{}")||{}}catch(e){}
+  try{weeklyNotes=JSON.parse(localStorage.getItem(notesKey)||"{}")||{}}catch(e){}
+  loadSharedThumbs();
+  try{const parsed=JSON.parse(localStorage.getItem(customBranchKey)||"[]");customBranches=Array.isArray(parsed)?parsed:[]}catch(e){customBranches=[]}
+  try{const parsed=JSON.parse(localStorage.getItem(branchEditsKey)||"{}");branchEdits=(parsed&&typeof parsed==="object")?parsed:{}}catch(e){branchEdits={}}
+  try{const parsed=JSON.parse(localStorage.getItem(infoStoreKey)||"{}");infoStore=(parsed&&typeof parsed==="object")?parsed:{}}catch(e){infoStore={}}
+  try{const parsed=JSON.parse(localStorage.getItem(manualKumulatifKey)||"{}");manualKumulatif=(parsed&&typeof parsed==="object")?parsed:{}}catch(e){manualKumulatif={}}
+  try{const parsed=JSON.parse(localStorage.getItem(cadStoreKey)||"{}");cadStore=(parsed&&typeof parsed==="object")?parsed:{}}catch(e){cadStore={}}
+  try{const parsed=JSON.parse(localStorage.getItem(cadImageStoreKey)||"{}");cadImageStore=(parsed&&typeof parsed==="object")?parsed:{}}catch(e){cadImageStore={}}
+  rebuildProjects();
+  refreshAreaOptions();
+  renderMapMarkers();
+  renderKpis();renderAreaSummary();renderInfo();renderCustomList();renderDocs();renderProgressEditor();renderKumulatifEditor();renderWeeklySummary();updateDriveMessage();renderCAD();
+  renderDashboardExtras();
+}
+
+const rekapYearKey="biznet-facility-rekap-year-v1";
+function getRekapYear(){try{const v=localStorage.getItem(rekapYearKey);if(v)return v}catch(e){}return "all"}
+
+function rebuildProjects(){
+  projects.length=0;
+  baseProjects.forEach(b=>{
+    const edit=branchEdits[String(b.id)];
+    projects.push(edit?{...b,...edit}:{...b});
+  });
+  customBranches.forEach(c=>projects.push({id:c.id,branch:c.branch,area:c.area,ro:c.ro||"",cost:c.cost||"",lat:c.lat,lng:c.lng,tahun:c.tahun,custom:true}));
+}
+function saveCustomBranches(){try{localStorage.setItem(customBranchKey,JSON.stringify(customBranches))}catch(e){}markSync([customBranchKey])}
+function saveBranchEdits(){try{localStorage.setItem(branchEditsKey,JSON.stringify(branchEdits))}catch(e){}markSync([branchEditsKey])}
+function saveInfoStore(){try{localStorage.setItem(infoStoreKey,JSON.stringify(infoStore))}catch(e){}markSync([infoStoreKey])}
+function saveManualKumulatif(){try{localStorage.setItem(manualKumulatifKey,JSON.stringify(manualKumulatif))}catch(e){}markSync([manualKumulatifKey])}
+function saveProgressStore(){try{localStorage.setItem(storageKey,JSON.stringify(progressStore))}catch(e){}markSync([storageKey])}
+function saveWeeklyNotes(){try{localStorage.setItem(notesKey,JSON.stringify(weeklyNotes))}catch(e){}markSync([notesKey])}
+function saveCadStore(){try{localStorage.setItem(cadStoreKey,JSON.stringify(cadStore))}catch(e){}markSync([cadStoreKey])}
+
+function initialStatuses(p){
+  if(progressStore[String(p.id)])return {...progressStore[String(p.id)]};
+  if(worksheetStatus[p.branch])return {...worksheetStatus[p.branch]};
+  return Object.fromEntries(items.map(i=>[i.key,p.id<=41?"Done":"None"]));
+}
+function statusesFor(p){return progressStore[String(p.id)]||initialStatuses(p)}
+function itemPercent(s){return statusPercent[s]??0}
+function weightedTotal(p){
+  const s=statusesFor(p);
+  return items.reduce((sum,i)=>sum+i.weight*itemPercent(s[i.key])/100,0);
+}
+function kumulatifFor(p){
+  const st=manualKumulatif[String(p.id)]||{};
+  return {networks:st.networks||"None",backbone:st.backbone||"None",spopLive:st.spopLive||"None"};
+}
+function fmt(n){return Number(n).toFixed(2)+"%"}
+function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function badge(t){return `<span class="badge ${t==="Done"?"done":(t==="Planning"||t==="None")?"none":"progress"}">${safe(t)}</span>`}
+/* Done = Total Progress Kumulatif tepat 100% (toleransi kecil untuk pembulatan) */
+function projectStatus(v){return v>=99.999?"Done":v<=0.001?"Planning":"On Progress"}
+function hasCoords(p){return Number.isFinite(p.lat)&&Number.isFinite(p.lng)}
+function mapQuery(p){return hasCoords(p)?`${p.lat},${p.lng}`:`${p.branch}, Indonesia`}
+function mapUrl(p){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(mapQuery(p))}
+
+/* ===== PETA SEMUA BRANCH (Leaflet + OpenStreetMap) =====
+   Setiap branch yang punya koordinat Latitude & Longitude tampil sebagai
+   pin berwarna sesuai status: hijau = Done (kumulatif 100%), kuning = On
+   Progress, abu = Planning. Klik pin untuk popup; cari branch untuk fokus. */
+let leafletMap=null,leafletMarkers={},leafletFallbackUsed=false;
+const MAP_CENTER=[-2.4,118],MAP_ZOOM=5;
+function mapPinColor(p){const s=projectStatus(cumulativeFor(p).total);return s==="Done"?"#12865b":s==="Planning"?"#768391":"#f3b323"}
+function initLeafletMap(){
+  const el=document.getElementById("mapLeaflet");
+  if(!el)return;
+  if(!window.L){
+    /* Fallback bila pustaka peta gagal dimuat (mis. tanpa internet) */
+    leafletFallbackUsed=true;
+    el.innerHTML='<iframe class="map-frame" style="height:100%" title="Peta proyek" src="https://maps.google.com/maps?q=Indonesia&output=embed"></iframe>';
+    const cap=document.getElementById("mapCaption");
+    if(cap)cap.textContent="Peta interaktif tidak termuat — pin branch butuh koneksi internet. Gunakan tombol Buka peta ↗.";
+    return;
+  }
+  if(leafletMap)return;
+  leafletMap=L.map("mapLeaflet",{scrollWheelZoom:false}).setView(MAP_CENTER,MAP_ZOOM);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap contributors"}).addTo(leafletMap);
+  renderMapMarkers();
+  setTimeout(()=>{if(leafletMap)leafletMap.invalidateSize()},350);
+}
+function renderMapMarkers(){
+  if(!leafletMap)return;
+  Object.values(leafletMarkers).forEach(m=>leafletMap.removeLayer(m));
+  leafletMarkers={};
+  projects.forEach(p=>{
+    if(!hasCoords(p))return;
+    const total=cumulativeFor(p).total,status=projectStatus(total);
+    const marker=L.circleMarker([p.lat,p.lng],{radius:7,weight:2,color:"#ffffff",fillColor:mapPinColor(p),fillOpacity:1}).addTo(leafletMap);
+    marker.bindTooltip(p.branch,{direction:"top",offset:[0,-6]});
+    marker.bindPopup(`<strong>${safe(p.branch)}</strong>`+
+      `<span class="pop-meta">${safe(p.area||"Area belum diisi")} · ${safe(p.ro||"—")} · CC ${safe(p.cost||"—")}${p.tahun?` · Tahun ${safe(p.tahun)}`:""}</span>`+
+      `<span class="pop-meta">${badge(status)} · Total Progress Kumulatif: <strong>${fmt(total)}</strong></span>`+
+      `<span class="pop-meta"><a href="${mapUrl(p)}" target="_blank" rel="noopener">Buka di Google Maps ↗</a></span>`);
+    leafletMarkers[p.id]=marker;
+  });
+  const cap=document.getElementById("mapCaption");
+  if(cap&&!cap.dataset.focused){
+    const count=Object.keys(leafletMarkers).length;
+    cap.textContent=count
+      ?`${count} branch tampil sebagai pin · klik pin untuk detail, cari branch untuk memfokuskan`
+      :"Belum ada branch dengan koordinat — isi Latitude & Longitude di halaman Informasi Project.";
+  }
+}
+function resetMapView(){
+  const cap=document.getElementById("mapCaption");
+  if(cap)delete cap.dataset.focused;
+  if(leafletMap){leafletMap.closePopup();leafletMap.setView(MAP_CENTER,MAP_ZOOM)}
+  const link=document.getElementById("mapOpenLink");
+  if(link)link.href="https://maps.google.com/maps?q=Indonesia";
+  renderMapMarkers();
+}
+function showMap(p){
+  const cap=document.getElementById("mapCaption");
+  const link=document.getElementById("mapOpenLink");
+  if(link)link.href=mapUrl(p);
+  if(cap){cap.dataset.focused="1";cap.textContent=hasCoords(p)
+    ?`${p.branch} · ${p.area||"Area belum diisi"} · ${p.lat}, ${p.lng}`
+    :`${p.branch} · koordinat belum diisi — pin tidak dapat ditampilkan`}
+  if(leafletFallbackUsed||!leafletMap)return;
+  if(hasCoords(p)){
+    leafletMap.setView([p.lat,p.lng],16);
+    const m=leafletMarkers[p.id];
+    if(m)m.openPopup();
+  }
+}
+function renderKpis(){
+  const done=projects.filter(p=>isProjectDone(p)).length;
+  document.getElementById("doneCount").textContent=done;
+  document.getElementById("progressCount").textContent=projects.length-done;
+  document.getElementById("totalCount").textContent=projects.length;
+  /* Blok kecil di bawah KPI: hanya JUMLAH branch dengan progress RENOVASI
+     KONSTRUKSI 100% saja (tanpa daftar nama, tanpa kumulatif). Angka utama
+     di atas tetap Done kumulatif 100%. */
+  const renovDone=projects.filter(p=>cumulativeFor(p).renovation>=99.999).length;
+  const renovCnt=document.getElementById("renovDoneCount");
+  if(renovCnt)renovCnt.textContent=renovDone;
+}
+function rekapList(){
+  const y=getRekapYear();
+  if(y==="all")return projects;
+  return projects.filter(p=>p.tahun&&Number(p.tahun)>=Number(y));
+}
+/* ===== REVISI 3: rekap area + daftar branch per status (maks 5 baris terlihat + scroll) ===== */
+function renderAreaSummary(){
+  const y=getRekapYear();
+  const list=rekapList();
+  const note=document.getElementById("rekapYearNote");
+  if(note)note.textContent=y==="all"
+    ?"Persentase dihitung terhadap jumlah branch pada area · menampilkan semua branch · setiap kartu memuat daftar branch per status (maks 5 baris terlihat — gulir untuk selengkapnya)"
+    :`Persentase dihitung terhadap jumlah branch pada area · menampilkan branch dengan Tahun ≥ ${y} (branch tanpa Tahun tidak dihitung) · daftar per status ikut memakai filter ini`;
+  const areas=[];
+  list.forEach(p=>{if(p.area&&!areas.includes(p.area))areas.push(p.area)});
+  const groups=areas.map(area=>({title:area,list:list.filter(p=>p.area===area)}));
+  groups.push({title:"TOTAL KESELURUHAN",list});
+  const listHtml=names=>names.length
+    ?names.map(n=>`<div class="area-list-item" title="${safe(n)}">${safe(n)}</div>`).join("")
+    :'<div class="area-list-item empty-item">—</div>';
+  document.getElementById("areaSummary").innerHTML=groups.map(g=>{
+    const total=g.list.length;
+    const done=g.list.filter(p=>isProjectDone(p)).length;
+    const planning=g.list.filter(p=>isProjectPlanning(p)).length;
+    const onProgress=total-done-planning;
+    const donePct=total?done/total*100:0,planningPct=total?planning/total*100:0,progressPct=total?onProgress/total*100:0;
+    const sortNames=arr=>arr.map(p=>p.branch).sort((a,b)=>a.localeCompare(b));
+    const planningNames=sortNames(g.list.filter(p=>isProjectPlanning(p)));
+    const progressNames=sortNames(g.list.filter(p=>!isProjectPlanning(p)&&!isProjectDone(p)));
+    const doneNames=sortNames(g.list.filter(p=>isProjectDone(p)));
+    return `<article class="card area-summary-card"><h3 class="area-summary-title">${safe(g.title)}</h3>
+      <div class="area-summary-row"><span class="area-summary-label">TOTAL BRANCH</span><span class="area-summary-value">${total}</span></div>
+      <div class="area-summary-row"><span class="area-summary-label">PLANNING</span><span class="area-summary-value planning">${planning} · ${fmt(planningPct)}</span></div>
+      <div class="track"><div class="fill gray" style="width:${planningPct}%"></div></div>
+      <div class="area-summary-row"><span class="area-summary-label">ON PROGRESS</span><span class="area-summary-value progress">${onProgress} · ${fmt(progressPct)}</span></div>
+      <div class="track"><div class="fill yellow" style="width:${progressPct}%"></div></div>
+      <div class="area-summary-row"><span class="area-summary-label">SELESAI</span><span class="area-summary-value done">${done} · ${fmt(donePct)}</span></div>
+      <div class="track"><div class="fill green" style="width:${donePct}%"></div></div>
+      <div class="area-lists">
+        <div><div class="area-list-label lp">PLANNING · ${planning}</div><div class="area-list-rows">${listHtml(planningNames)}</div></div>
+        <div><div class="area-list-label lo">ON PROGRESS · ${onProgress}</div><div class="area-list-rows">${listHtml(progressNames)}</div></div>
+        <div><div class="area-list-label ls">SELESAI · ${done}</div><div class="area-list-rows">${listHtml(doneNames)}</div></div>
+      </div>
+    </article>`;
+  }).join("");
+}
+function renderOverviewSearch(){
+  const q=document.getElementById("overviewBranchSearch").value.trim().toLowerCase();
+  const out=document.getElementById("overviewBranchResult");
+  if(!q){
+    out.textContent="Masukkan nama branch untuk melihat progress.";
+    resetMapView();
+    return;
+  }
+  const matches=projects.filter(p=>p.branch.toLowerCase().includes(q)).sort((a,b)=>cumulativeFor(b).total-cumulativeFor(a).total);
+  if(!matches.length){out.innerHTML='<div class="empty">Branch tidak ditemukan.</div>';return}
+  out.innerHTML=matches.map(p=>{
+    const s=cumulativeFor(p),st=kumulatifFor(p);
+    return `<div class="result-row">
+      <div class="result-name">${safe(p.branch)}<span class="result-meta">${safe(p.area||"Area belum diisi")} · ${safe(p.ro||"—")} · CC ${safe(p.cost||"—")}${hasCoords(p)?` · ${p.lat}, ${p.lng}`:""}</span></div>
+      <div><strong>Renovasi Konstruksi ${fmt(s.renovation)}</strong></div>
+      <div><strong>Perangkat Networks ${st.networks} · ${fmt(s.networks)}</strong></div>
+      <div><strong>Project Backbone ${st.backbone} · ${fmt(s.backbone)}</strong></div>
+      <div><strong>SPOP Live ${st.spopLive} · ${fmt(s.spopLive)}</strong></div>
+      <div><strong>Total Progress Kumulatif ${fmt(s.total)}</strong><span class="result-meta"><a href="${mapUrl(p)}" target="_blank" rel="noopener">Google Maps ↗</a></span></div>
+    </div>`;
+  }).join("");
+  const first=matches.find(p=>hasCoords(p))||matches[0];
+  showMap(first);
+}
+function matchesSearch(p,q){return `${p.branch} ${p.area} ${p.ro} ${p.cost}`.toLowerCase().includes(q)}
+function renovationPercent(p){return items.reduce((sum,i)=>sum+itemPercent(statusesFor(p)[i.key]||"None"),0)/items.length}
+function sortList(list,sort,score){
+  return [...list].sort((a,b)=>sort==="name"?a.branch.localeCompare(b.branch):sort==="source"?a.id-b.id:score(b)-score(a));
+}
+
+/* ===== CHART MILESTONE PROJECT (DONE PER TAHUN) + REVISI 2: REKAP DONE PER TAHUN ===== */
+function renderMilestoneChart(){
+  const wrap=document.getElementById("milestoneChart");
+  if(!wrap)return;
+  const groups=new Map();
+  projects.forEach(p=>{
+    if(!isProjectDone(p))return;
+    const y=p.tahun?String(p.tahun):"Tanpa Tahun";
+    groups.set(y,(groups.get(y)||0)+1);
+  });
+  const keys=[...groups.keys()].sort((a,b)=>{
+    if(a==="Tanpa Tahun")return 1;
+    if(b==="Tanpa Tahun")return -1;
+    return Number(a)-Number(b);
+  });
+  const max=Math.max(1,...keys.map(k=>groups.get(k)));
+  wrap.innerHTML=keys.map(k=>{
+    const done=groups.get(k);
+    const h=Math.max(done/max*100,4);
+    return `<div class="chart-col" title="${safe(k)} — ${done} project Done">
+      <div class="chart-bars"><div class="chart-bar bar-done" style="height:${h.toFixed(1)}%"><span>${done}</span></div></div>
+      <div class="chart-year">${safe(k)}</div>
+    </div>`;
+  }).join("")||'<div class="empty">Belum ada project Done.</div>';
+}
+/* Rekap Done per tahun: satu branch = satu baris, dikelompokkan per tahun
+   (kepala grup sticky), kotak list maks ±5 baris terlihat + scroll di dalam
+   kotak; baris TOTAL selalu tampak di bawah kotak. */
+function renderMilestoneRecap(){
+  const wrap=document.getElementById("milestoneRecapList");
+  const totalEl=document.getElementById("milestoneRecapTotal");
+  if(!wrap)return;
+  const groups=new Map();
+  projects.forEach(p=>{
+    if(!isProjectDone(p))return;
+    const y=p.tahun?String(p.tahun):"Tanpa Tahun";
+    if(!groups.has(y))groups.set(y,[]);
+    groups.get(y).push(p.branch);
+  });
+  const keys=[...groups.keys()].sort((a,b)=>{
+    if(a==="Tanpa Tahun")return 1;
+    if(b==="Tanpa Tahun")return -1;
+    return Number(a)-Number(b);
+  });
+  wrap.innerHTML=keys.map(k=>{
+    const names=[...groups.get(k)].sort((a,b)=>a.localeCompare(b));
+    return `<div class="milestone-group-head"><span>${safe(k)}</span><span class="milestone-row-count">${names.length} Done</span></div>`+
+      names.map(n=>`<div class="milestone-row" title="${safe(n)}"><span class="milestone-row-name">${safe(n)}</span></div>`).join("");
+  }).join("")||'<div class="milestone-row"><span class="milestone-row-name">Belum ada project Done.</span></div>';
+  if(totalEl){
+    const tot=keys.reduce((s,k)=>s+groups.get(k).length,0);
+    totalEl.textContent=`TOTAL PROJECT DONE: ${tot} branch`;
+  }
+}
+
+/* ===== KALENDER REMINDER (REVISI 1: list hanya schedule tanggal terpilih) ===== */
+let calYear=null,calMonth=null,calSelectedDate=null;
+function pad2(n){return String(n).padStart(2,"0")}
+function todayISO(){const d=new Date();return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`}
+function isoDate(y,m,d){return `${y}-${pad2(m+1)}-${pad2(d)}`}
+function fmtIso(iso){
+  const [y,m,d]=String(iso||"").split("-").map(Number);
+  if(!y||!m||!d)return iso||"—";
+  return new Date(y,m-1,d).toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
+}
+function allDateEvents(){
+  const list=[];
+  projects.forEach(p=>{
+    const inf=infoFor(p);
+    if(inf.startRenovasi)list.push({p,date:inf.startRenovasi,type:"start"});
+    if(inf.deadline)list.push({p,date:inf.deadline,type:"deadline"});
+  });
+  return list;
+}
+function renderCalendar(){
+  if(calYear===null){const t=new Date();calYear=t.getFullYear();calMonth=t.getMonth()}
+  const events=allDateEvents();
+  const byDate={};
+  events.forEach(e=>{(byDate[e.date]=byDate[e.date]||[]).push(e)});
+  const first=new Date(calYear,calMonth,1);
+  const startDow=first.getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const tIso=todayISO();
+  let html=["Min","Sen","Sel","Rab","Kam","Jum","Sab"].map(d=>`<div class="calendar-dow">${d}</div>`).join("");
+  for(let i=0;i<startDow;i++)html+='<div class="calendar-cell empty"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const iso=isoDate(calYear,calMonth,d);
+    const evs=byDate[iso]||[];
+    const hasStart=evs.some(e=>e.type==="start");
+    const hasDeadline=evs.some(e=>e.type==="deadline");
+    const cls=["calendar-cell"];
+    if(iso===tIso)cls.push("today");
+    if(hasStart)cls.push("has-start");
+    if(hasDeadline)cls.push("has-deadline");
+    if(hasStart||hasDeadline)cls.push("has-event");
+    if(calSelectedDate===iso)cls.push("selected");
+    const dots=(hasStart?'<i class="cal-dot dot-start"></i>':"")+(hasDeadline?'<i class="cal-dot dot-deadline"></i>':"");
+    html+=`<div class="${cls.join(" ")}"${hasStart||hasDeadline?` data-cal-date="${iso}" title="Lihat schedule ${fmtIso(iso)}"`:""}><span class="dow-num">${d}</span>${dots?`<span class="cal-dots">${dots}</span>`:""}</div>`;
+  }
+  const grid=document.getElementById("calendarGrid");
+  grid.innerHTML=html;
+  document.getElementById("calLabel").textContent=first.toLocaleDateString("id-ID",{month:"long",year:"numeric"});
+  grid.querySelectorAll("[data-cal-date]").forEach(cell=>cell.addEventListener("click",()=>{
+    calSelectedDate=calSelectedDate===cell.dataset.calDate?null:cell.dataset.calDate;
+    renderCalendar();
+  }));
+  renderReminders(events);
+}
+function shiftMonth(delta){
+  calMonth+=delta;
+  if(calMonth<0){calMonth=11;calYear--}
+  if(calMonth>11){calMonth=0;calYear++}
+  renderCalendar();
+}
+function renderReminders(events){
+  const wrap=document.getElementById("reminderList");
+  const noteEl=document.getElementById("reminderFilterNote");
+  const resetBtn=document.getElementById("calReset");
+  if(resetBtn)resetBtn.style.display=calSelectedDate?"":"none";
+  /* Revisi: list hanya berisi schedule tanggal yang dipilih pada kalender —
+     tanpa pilihan tanggal, cukup petunjuk singkat (tidak menampilkan semua schedule) */
+  if(!calSelectedDate){
+    if(noteEl)noteEl.style.display="none";
+    wrap.innerHTML='<div class="empty" style="padding:14px">Klik tanggal bertanda pada kalender untuk melihat schedule Start Renovasi &amp; Deadline di hari tersebut.</div>';
+    return;
+  }
+  if(noteEl){noteEl.style.display="";noteEl.textContent="Schedule tanggal "+fmtIso(calSelectedDate)}
+  const dayEvents=events.filter(e=>e.date===calSelectedDate);
+  if(!dayEvents.length){
+    wrap.innerHTML='<div class="empty" style="padding:14px">Tidak ada Start Renovasi / Deadline pada tanggal ini.</div>';
+    return;
+  }
+  const t=todayISO();
+  wrap.innerHTML=dayEvents.map(e=>{
+    const diff=Math.round((new Date(e.date)-new Date(t))/86400000);
+    let status;
+    if(diff===0)status=e.type==="start"?"Mulai hari ini":"Deadline hari ini";
+    else if(diff>0)status=e.type==="start"?`Mulai ${diff} hari lagi`:`Deadline ${diff} hari lagi`;
+    else status=e.type==="start"?`Sudah mulai ${-diff} hari lalu`:(isProjectDone(e.p)?"Project Done · deadline terlewat":`Lewat deadline ${-diff} hari`);
+    const chip=diff===0?"chip-today":diff>0?"chip-upcoming":"chip-past";
+    return `
+    <div class="reminder-row">
+      <div><div class="reminder-branch">${safe(e.p.branch)}</div><span class="meta">${safe(e.p.area||"—")} · ${safe(e.p.ro||"—")} · CC ${safe(e.p.cost||"—")}</span></div>
+      <div class="reminder-right"><span class="badge ${e.type==="start"?"blue":"red"}">${e.type==="start"?"START RENOVASI":"DEADLINE"}</span><span class="reminder-date">${fmtIso(e.date)}</span><br><span class="reminder-chip ${chip}">${safe(status)}</span></div>
+    </div>`;
+  }).join("");
+}
+function renderDashboardExtras(){renderMilestoneChart();renderCalendar();renderMilestoneRecap()}
+function initDashboardExtras(){
+  document.getElementById("calPrev").addEventListener("click",()=>shiftMonth(-1));
+  document.getElementById("calNext").addEventListener("click",()=>shiftMonth(1));
+  document.getElementById("calReset").addEventListener("click",()=>{calSelectedDate=null;renderCalendar()});
+  renderMilestoneChart();
+  renderCalendar();
+  renderMilestoneRecap();
+}
+
+const rukoOptions=["Planning","Proses LOI","Done Paymen"];
+const stageOptions=["None","On Progress","Done"];
+function infoFor(p){return infoStore[String(p.id)]||{}}
+function infoValue(p,field,def){const v=infoFor(p)[field];return v===undefined||v===null?def:v}
+function defaultRuko(p){return p.id<=41?"Done Paymen":"Planning"}
+function defaultStage(p){return p.id<=41?"Done":"None"}
+function saveInfoField(p,field,value){
+  if(!infoStore[String(p.id)])infoStore[String(p.id)]={};
+  infoStore[String(p.id)][field]=value;
+  saveInfoStore();
+}
+function setBranchTahun(p,raw){
+  const val=raw===""?null:Number(raw);
+  if(p.custom){
+    const c=customBranches.find(x=>x.id===p.id);
+    if(c)c.tahun=val;
+    saveCustomBranches();
+  }else{
+    branchEdits[String(p.id)]={...(branchEdits[String(p.id)]||{}),tahun:val};
+    saveBranchEdits();
+  }
+  rebuildProjects();
+  refreshAreaOptions();
+  renderAreaSummary();
+  renderCustomList();
+}
+function tahunSelect(p){
+  const cur=p.tahun??"";
+  return `<select data-info="tahun" aria-label="Tahun ${safe(p.branch)}"><option value="">—</option>${yearOptions.map(y=>`<option value="${y}" ${Number(cur)===y?"selected":""}>${y}</option>`).join("")}</select>`;
+}
+
+/* ===== DATA CAD (REVISI 4: status otomatis + Revisi/Comment User) ===== */
+const MAX_PDF_BYTES=6*1024*1024;
+function cadEntries(p){return cadStore[String(p.id)]||[]}
+function cadImageKey(p,e){return `${p.id}:${e.id}`}
+function cadFileMeta(key){
+  const raw=cadImageStore[key]||cadMemoryStore[key]||null;
+  if(!raw)return null;
+  const memoryOnly=!cadImageStore[key]&&!!cadMemoryStore[key];
+  if(typeof raw==="string")return {data:raw,uploadedAt:null,memoryOnly};
+  return {data:raw.data||"",uploadedAt:raw.uploadedAt||null,memoryOnly};
+}
+function fmtFileStamp(iso){
+  if(!iso)return null;
+  const d=new Date(iso);
+  if(isNaN(d))return null;
+  return d.toLocaleString("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+}
+/* Status otomatis (REVISI 4):
+   - Belum ada file PDF → status tersimpan (default On Progress).
+   - File ada & tidak ada comment user → Done (gambar dianggap selesai).
+   - File ada & comment user lebih baru daripada upload terakhir → On Progress.
+   - File ada & comment lebih lama dari upload terakhir (revisi sudah diupload) → Done lagi. */
+function cadEntryHasFile(p,e){
+  const meta=cadFileMeta(cadImageKey(p,e));
+  return !!(meta&&meta.data&&!meta.data.startsWith("data:image"));
+}
+function cadEntryStatus(p,e){
+  if(!cadEntryHasFile(p,e))return e.statusGambar||"On Progress";
+  if(!(e.userComment&&e.userComment.trim()))return "Done";
+  const cAt=Date.parse(e.commentAt||"");
+  const meta=cadFileMeta(cadImageKey(p,e));
+  const uAt=Date.parse((meta&&meta.uploadedAt)||"");
+  if(Number.isFinite(cAt)&&Number.isFinite(uAt))return cAt>uAt?"On Progress":"Done";
+  return "On Progress";
+}
+function cadCommentStampText(p,e){
+  if(!(e.userComment&&e.userComment.trim()))return "Belum ada comment user — file yang sudah diupload dianggap Done (menunggu review).";
+  return `Comment terakhir: ${fmtFileStamp(e.commentAt)||"—"} · status otomatis: ${cadEntryStatus(p,e)}`;
+}
+function cadStatusSummary(p){
+  const list=cadEntries(p);
+  if(!list.length)return null;
+  return list.some(e=>cadEntryStatus(p,e)!=="Done")?"On Progress":"Done";
+}
+const pdfObjectUrls=new Map();
+function dataUriToBlob(dataUri){
+  const [meta,b64]=String(dataUri).split(",");
+  const mime=(meta&&meta.match(/data:([^;]+)/)||[])[1]||"application/pdf";
+  const bin=atob(b64||"");
+  const arr=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+function getPdfObjectUrl(key){
+  const meta=cadFileMeta(key);
+  if(!meta||!meta.data||meta.data.startsWith("data:image"))return null;
+  if(pdfObjectUrls.has(key))return pdfObjectUrls.get(key);
+  try{
+    const url=URL.createObjectURL(dataUriToBlob(meta.data));
+    pdfObjectUrls.set(key,url);
+    return url;
+  }catch(e){return null}
+}
+function releasePdfObjectUrl(key){
+  if(pdfObjectUrls.has(key)){
+    try{URL.revokeObjectURL(pdfObjectUrls.get(key))}catch(e){}
+    pdfObjectUrls.delete(key);
+  }
+}
+function readAsDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result);
+    r.onerror=()=>reject(Error("read failed"));
+    r.readAsDataURL(file);
+  });
+}
+function cadPreviewHtml(key){
+  const meta=cadFileMeta(key);
+  if(!meta||!meta.data)return "";
+  if(meta.data.startsWith("data:image"))return `<img src="${meta.data}" alt="Gambar kerja">`;
+  const url=getPdfObjectUrl(key);
+  return url?`<embed class="cad-pdf-frame" src="${url}" type="application/pdf">`:"";
+}
+let selectedCadProjectIndex=null;
+function cadEntryHtml(p,e,idx){
+  const key=cadImageKey(p,e);
+  const meta=cadFileMeta(key);
+  const hasFile=!!(meta&&meta.data);
+  const url=hasFile?getPdfObjectUrl(key):null;
+  const st=cadEntryStatus(p,e);
+  const fileStamp=meta&&meta.uploadedAt?fmtFileStamp(meta.uploadedAt):null;
+  const fileNote=hasFile
+    ?(fileStamp?`📄 File diupload/diperbarui: ${fileStamp}${meta.memoryOnly?" · tersimpan sementara di sesi ini (permanen di Drive setelah Submit Data)":""}`:"📄 File tersimpan · tanggal upload tidak tercatat")
+    :"⬆ Belum ada file — klik kotak di atas untuk mengunggah PDF";
+  return `<div class="cad-entry" data-cad-entry="${safe(e.id)}">
+    <div class="cad-entry-head">
+      <div class="cad-entry-title"><strong>Gambar Kerja #${idx+1}</strong><span class="badge ${st==="Done"?"done":"progress"}" data-cad-status-badge>${safe(st)}</span></div>
+      <button type="button" class="button danger" data-cad-delete="${safe(e.id)}">Hapus Data</button>
+    </div>
+    <div class="cad-entry-body">
+      <div class="cad-entry-info">
+        <div class="item-field"><label>Tanggal Request</label><input type="date" data-cad-field="tanggalRequest" value="${safe(e.tanggalRequest||"")}"></div>
+        <div class="item-field"><label>Tanggal Update</label><input type="date" data-cad-field="tanggalUpdate" value="${safe(e.tanggalUpdate||"")}"></div>
+        <div class="item-field"><label>Nama PIC</label><input type="text" data-cad-field="pic" value="${safe(e.pic||"")}" placeholder="Nama PIC CAD"></div>
+        <div class="item-field"><label>Status Gambar (otomatis)</label>
+          <div class="cad-status-line"><span class="badge ${st==="Done"?"done":"progress"}" data-cad-status-badge>${safe(st)}</span></div>
+          <span class="cad-status-hint">Otomatis: file PDF baru tanpa comment user → Done · ada comment user setelah upload → On Progress · comment dihapus → kembali Done.</span>
+        </div>
+        <div class="item-field cad-full"><label>Revisi / Comment User <button type="button" class="button ghost" data-cad-comment-clear style="margin-left:6px;padding:3px 8px;font-size:9px">Hapus Comment</button></label>
+          <textarea data-cad-comment placeholder="Tulis revisi/comment user di sini. Comment setelah upload → status otomatis On Progress; tanpa comment → Done.">${safe(e.userComment||"")}</textarea>
+          <span class="small-muted" data-cad-comment-stamp style="display:block;margin-top:5px">${safe(cadCommentStampText(p,e))}</span>
+        </div>
+        <div class="item-field cad-full"><label>Keterangan Progress</label><textarea data-cad-field="keterangan" placeholder="Contoh: layout denah rev.2 menunggu approval">${safe(e.keterangan||"")}</textarea></div>
+      </div>
+      <div class="cad-entry-work">
+        <div class="item-field cad-work-field">
+          <label>File Gambar Kerja · 1 file (PDF · maks 6 MB) ${hasFile?`<button type="button" class="button ghost" data-cad-file-remove style="margin-left:6px">Hapus File</button>${url?`<a class="button ghost" href="${url}" target="_blank" rel="noopener" style="margin-left:6px">Buka PDF ↗</a>`:""}`:""}</label>
+          <label class="cad-upload ${hasFile?"has-pdf":""}">${cadPreviewHtml(key)}
+          <span class="cad-upload-hint">${hasFile?"Klik untuk mengganti file (revisi) — comment lama otomatis tidak berlaku":"Klik untuk mengunggah PDF gambar kerja"}</span>
+          <input type="file" accept="application/pdf,.pdf"></label>
+          <div class="cad-file-meta">${safe(fileNote)}</div>
+        </div>
+      </div>
+    </div></div>`;
+}
+function updateCadEntryStatusUi(entryEl,p,entry){
+  const st=cadEntryStatus(p,entry);
+  entryEl.querySelectorAll("[data-cad-status-badge]").forEach(b=>{b.textContent=st;b.className="badge "+(st==="Done"?"done":"progress")});
+  const stamp=entryEl.querySelector("[data-cad-comment-stamp]");
+  if(stamp)stamp.textContent=cadCommentStampText(p,entry);
+}
+function renderCAD(){
+  const editor=document.getElementById("cadEditor");
+  const selEl=document.getElementById("cadSelected");
+  if(selectedCadProjectIndex===null||!projects[selectedCadProjectIndex]){
+    if(editor)editor.innerHTML="";
+    if(selEl)selEl.textContent="Klik atau arahkan kursor ke pencarian untuk memunculkan daftar branch, lalu pilih branch untuk mengelola data CAD.";
+  }else{
+    const p=projects[selectedCadProjectIndex];
+    const list=cadEntries(p);
+    selEl.innerHTML=`Branch dipilih: <strong>${safe(p.branch)}</strong> · ${safe(p.ro||"—")} · CC ${safe(p.cost||"—")} · <strong>${list.length}</strong> data CAD`;
+    editor.innerHTML=(list.length?list.map((e,i)=>cadEntryHtml(p,e,i)).join(""):'<div class="empty">Belum ada data CAD untuk branch ini. Klik "＋ Tambah Data CAD" untuk memulai.</div>')+
+      `<div class="branch-form-actions"><button id="addCadEntryButton" class="button" type="button">＋ Tambah Data CAD</button><span class="small-muted">Setiap data berisi 1 file PDF gambar kerja (maks 6 MB, bisa diganti untuk revisi), kolom Revisi/Comment user, dan Status Gambar otomatis. Setelah selesai, klik ⬆ Submit Data — PDF terkirim ke Google Drive.</span></div>`;
+    wireCadEvents(p);
+  }
+  renderCadSummary();
+}
+function wireCadEvents(p){
+  const editor=document.getElementById("cadEditor");
+  editor.querySelectorAll("[data-cad-field]").forEach(el=>{
+    const evt=(el.tagName==="SELECT"||(el.tagName==="INPUT"&&el.type==="date"))?"change":"input";
+    el.addEventListener(evt,()=>{
+      const entryEl=el.closest("[data-cad-entry]");
+      const list=cadStore[String(p.id)]||[];
+      const entry=list.find(x=>x.id===entryEl.dataset.cadEntry);
+      if(!entry)return;
+      entry[el.dataset.cadField]=el.value;
+      saveCadStore();
+      renderCadSummary();
+      if(evt==="change")renderInfo();
+    });
+  });
+  /* Revisi/Comment user (REVISI 4) — menyimpan otomatis;
+     comment setelah upload PDF → status otomatis On Progress */
+  editor.querySelectorAll("[data-cad-comment]").forEach(ta=>{
+    ta.addEventListener("input",()=>{
+      const entryEl=ta.closest("[data-cad-entry]");
+      const entry=(cadStore[String(p.id)]||[]).find(x=>x.id===entryEl.dataset.cadEntry);
+      if(!entry)return;
+      entry.userComment=ta.value;
+      entry.commentAt=ta.value.trim()?new Date().toISOString():"";
+      saveCadStore();
+      updateCadEntryStatusUi(entryEl,p,entry);
+      renderCadSummary();
+    });
+    ta.addEventListener("change",()=>renderInfo());
+  });
+  editor.querySelectorAll("[data-cad-comment-clear]").forEach(btn=>btn.addEventListener("click",()=>{
+    const entryEl=btn.closest("[data-cad-entry]");
+    const entry=(cadStore[String(p.id)]||[]).find(x=>x.id===entryEl.dataset.cadEntry);
+    if(!entry)return;
+    entry.userComment="";
+    entry.commentAt="";
+    const ta=entryEl.querySelector("[data-cad-comment]");
+    if(ta)ta.value="";
+    saveCadStore();
+    updateCadEntryStatusUi(entryEl,p,entry);
+    renderCadSummary();
+    renderInfo();
+  }));
+  const addBtn=editor.querySelector("#addCadEntryButton");
+  if(addBtn)addBtn.addEventListener("click",()=>{
+    if(!cadStore[String(p.id)])cadStore[String(p.id)]=[];
+    cadStore[String(p.id)].push({id:"e"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),tanggalRequest:"",tanggalUpdate:"",pic:"",keterangan:"",statusGambar:"On Progress",userComment:"",commentAt:""});
+    saveCadStore();
+    renderCAD();
+  });
+  editor.querySelectorAll("[data-cad-delete]").forEach(btn=>btn.addEventListener("click",()=>{
+    const id=btn.dataset.cadDelete;
+    cadStore[String(p.id)]=(cadStore[String(p.id)]||[]).filter(x=>x.id!==id);
+    const key=cadImageKey(p,{id});
+    releasePdfObjectUrl(key);
+    delete cadImageStore[key];
+    delete cadMemoryStore[key];
+    try{localStorage.setItem(cadImageStoreKey,JSON.stringify(cadImageStore))}catch(e){}
+    saveCadStore();
+    renderCAD();
+    renderInfo();
+  }));
+  editor.querySelectorAll(".cad-upload input[type=file]").forEach(inp=>inp.addEventListener("change",async e=>{
+    const file=e.target.files&&e.target.files[0];
+    if(!file)return;
+    const entryEl=inp.closest("[data-cad-entry]");
+    const key=cadImageKey(p,{id:entryEl.dataset.cadEntry});
+    const isPdf=(file.type==="application/pdf")||file.name.toLowerCase().endsWith(".pdf");
+    if(!isPdf){alert("Mohon unggah file dalam bentuk PDF.");e.target.value="";return}
+    if(file.size>MAX_PDF_BYTES){alert("Ukuran PDF maksimal 6 MB.");e.target.value="";return}
+    try{
+      const dataUrl=await readAsDataURL(file);
+      releasePdfObjectUrl(key);
+      cadImageStore[key]={data:dataUrl,uploadedAt:new Date().toISOString()};
+      delete cadMemoryStore[key];
+      try{localStorage.setItem(cadImageStoreKey,JSON.stringify(cadImageStore))}
+      catch(err){
+        /* Kuota browser tidak cukup (PDF besar) — simpan sementara di sesi ini;
+           salinan permanen akan dibuat di Google Drive saat Submit Data */
+        delete cadImageStore[key];
+        try{localStorage.setItem(cadImageStoreKey,JSON.stringify(cadImageStore))}catch(e2){}
+        cadMemoryStore[key]={data:dataUrl,uploadedAt:new Date().toISOString()};
+        alert("PDF terlalu besar untuk disimpan di browser ini — pratinjau bertahan selama halaman terbuka. Klik ⬆ Submit Data agar PDF tersimpan permanen di Google Drive.");
+      }
+      saveCadStore();
+      renderCAD();
+      renderInfo();
+    }catch(err){alert("File tidak dapat dibaca. Coba file PDF lain.")}
+  }));
+  editor.querySelectorAll("[data-cad-file-remove]").forEach(btn=>btn.addEventListener("click",()=>{
+    const entryEl=btn.closest("[data-cad-entry]");
+    const key=cadImageKey(p,{id:entryEl.dataset.cadEntry});
+    releasePdfObjectUrl(key);
+    delete cadImageStore[key];
+    delete cadMemoryStore[key];
+    try{localStorage.setItem(cadImageStoreKey,JSON.stringify(cadImageStore))}catch(e){}
+    saveCadStore();
+    renderCAD();
+    renderInfo();
+  }));
+}
+function picCadRecaps(){
+  const pics=new Map();
+  projects.forEach(p=>{
+    cadEntries(p).forEach(e=>{
+      const pic=String(e.pic||"").trim();
+      if(!pic)return;
+      const key=pic.toLowerCase();
+      if(!pics.has(key))pics.set(key,{name:pic,onProgress:0,done:0,branches:new Map()});
+      const r=pics.get(key);
+      const done=cadEntryStatus(p,e)==="Done";
+      if(done)r.done++;else r.onProgress++;
+      if(!r.branches.has(p.branch))r.branches.set(p.branch,{onProgress:0,done:0});
+      const b=r.branches.get(p.branch);
+      if(done)b.done++;else b.onProgress++;
+    });
+  });
+  return [...pics.values()].sort((a,b)=>a.name.localeCompare(b.name));
+}
+function renderCadSummary(){
+  const wrap=document.getElementById("cadSummary");
+  if(!wrap)return;
+  const recs=picCadRecaps();
+  if(!recs.length){
+    wrap.innerHTML='<div class="empty">Belum ada data PIC. Isi Nama PIC pada data CAD di atas (Status Gambar terisi otomatis dari upload PDF &amp; Revisi/Comment user) — satu kotak kartu per PIC (Nama, On Progress, Total Done, branch yang dikerjakan) akan terbentuk otomatis.</div>';
+    return;
+  }
+  const totOP=recs.reduce((s,r)=>s+r.onProgress,0);
+  const totD=recs.reduce((s,r)=>s+r.done,0);
+  const totB=recs.reduce((s,r)=>s+r.branches.size,0);
+  const cards=recs.map(r=>{
+    const branches=[...r.branches.entries()].map(([bn,c])=>`<div class="pic-branch-line"><strong>${safe(bn)}</strong><span class="meta">${c.onProgress} On Progress · ${c.done} Done</span></div>`).join("");
+    return `<article class="pic-card">
+      <div class="pic-card-head"><h4>${safe(r.name)}</h4><span class="badge ${r.onProgress?"progress":"done"}">${r.onProgress+r.done} gambar</span></div>
+      <div class="pic-stats">
+        <div class="pic-stat op"><strong>${r.onProgress}</strong><span>On Progress</span></div>
+        <div class="pic-stat dn"><strong>${r.done}</strong><span>Total Done</span></div>
+      </div>
+      <div class="pic-branches"><div class="pic-branches-label">Branch yang sudah dikerjakan</div>${branches||'<span class="meta">—</span>'}</div>
+    </article>`;
+  }).join("");
+  wrap.innerHTML=`<div class="pic-total-bar"><span class="badge blue">${recs.length} PIC</span><span class="small-muted">TOTAL: <strong>${totOP} On Progress</strong> · <strong>${totD} Done</strong> · ${totB} penugasan branch</span></div><div class="pic-grid">${cards}</div>`;
+}
+function setupCadPicker(){
+  const input=document.getElementById("cadBranchSearch");
+  const results=document.getElementById("cadBranchResults");
+  const container=input.closest(".branch-picker");
+  if(!input||!container)return;
+  let hideTimer=null;
+  const cancelHide=()=>clearTimeout(hideTimer);
+  const scheduleHide=()=>{cancelHide();hideTimer=setTimeout(()=>{results.innerHTML=""},250)};
+  const hideList=()=>{cancelHide();results.innerHTML=""};
+  function applySelection(index){
+    const p=projects[index];
+    if(!p)return;
+    input.value=p.branch;
+    hideList();
+    selectedCadProjectIndex=index;
+    renderCAD();
+  }
+  function showList(){
+    const q=input.value.trim().toLowerCase();
+    const all=projects.map((p,index)=>({p,index}));
+    const matches=q?all.filter(({p})=>matchesSearch(p,q)):all;
+    if(!matches.length){results.innerHTML='<div class="branch-result"><span>Branch tidak ditemukan.</span></div>';return}
+    let html=matches.slice(0,PARTIAL_LIMIT).map(({p,index})=>`
+      <button type="button" class="branch-result" data-cad-index="${index}">
+        <strong>${safe(p.branch)}</strong>
+        <span>${safe(p.ro||"—")} · Cost Center ${safe(p.cost||"—")} · ${safe(p.area||"Area belum diisi")}</span>
+      </button>`).join("");
+    if(matches.length>PARTIAL_LIMIT)html+=`<div class="branch-result branch-more"><span>Menampilkan ${PARTIAL_LIMIT} dari ${matches.length} branch — ketik untuk mempersempit.</span></div>`;
+    results.innerHTML=html;
+    results.querySelectorAll("[data-cad-index]").forEach(btn=>btn.addEventListener("click",()=>applySelection(Number(btn.dataset.cadIndex))));
+  }
+  input.addEventListener("focus",showList);
+  input.addEventListener("click",showList);
+  input.addEventListener("mouseenter",showList);
+  input.addEventListener("input",()=>{selectedCadProjectIndex=null;renderCAD();showList()});
+  input.addEventListener("keydown",e=>{if(e.key==="Escape")hideList()});
+  container.addEventListener("mouseleave",scheduleHide);
+  container.addEventListener("mouseenter",cancelHide);
+  document.addEventListener("mousedown",e=>{if(!container.contains(e.target))hideList()});
+}
+
+/* ===== KIRIM PDF CAD KE GOOGLE DRIVE ===== */
+function cadDriveFolderName(p){
+  const parts=["CAD",sanitizeDriveName(p.branch)];
+  if(p.ro)parts.push("RO "+sanitizeDriveName(p.ro));
+  if(p.cost)parts.push("CC "+sanitizeDriveName(p.cost));
+  if(p.tahun)parts.push("Tahun "+p.tahun);
+  return parts.join(" - ");
+}
+async function sendCadPdfsToDrive(p,pdfs){
+  const files=pdfs.map(x=>({
+    name:`${sanitizeDriveName(p.branch)} - Gambar Kerja ${x.i+1}.pdf`,
+    mime:"application/pdf",
+    data:x.meta.data.split(",")[1]||""
+  })).filter(f=>f.data);
+  if(!files.length)return {ok:true,url:null};
+  try{
+    const res=await fetch(getDriveUrl(),{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({folderName:cadDriveFolderName(p),files})});
+    const json=await res.json();
+    if(json.status!=="ok")throw new Error(json.message||"Gagal mengirim.");
+    return {ok:true,url:json.url||null};
+  }catch(err){return {ok:false,url:null}}
+}
+async function submitCadData(){
+  const p=selectedCadProjectIndex!==null?projects[selectedCadProjectIndex]:null;
+  if(!p){alert("Cari dan pilih branch terlebih dahulu.");return}
+  const msgEl=document.getElementById("cadSubmitMessage");
+  const pdfs=[];
+  cadEntries(p).forEach((e,i)=>{
+    const meta=cadFileMeta(cadImageKey(p,e));
+    if(meta&&meta.data&&!meta.data.startsWith("data:image"))pdfs.push({i,meta});
+  });
+  let driveUrl=null,driveCount=0;
+  if(pdfs.length){
+    if(msgEl){msgEl.textContent="⏳ Mengirim PDF ke Google Drive & mensubmit data…";msgEl.className="form-msg"}
+    const sent=await sendCadPdfsToDrive(p,pdfs);
+    if(!sent.ok){
+      if(msgEl){msgEl.textContent="❌ Pengiriman PDF ke Google Drive gagal — periksa koneksi internet lalu klik Submit Data kembali.";msgEl.className="form-msg err"}
+      return;
+    }
+    driveUrl=sent.url;driveCount=pdfs.length;
+  }
+  await submitStores([cadStoreKey],"CAD",msgEl,p.branch);
+  if(msgEl&&driveCount){
+    msgEl.innerHTML=`✅ Data CAD (branch: ${safe(p.branch)}) tersubmit — ${driveCount} PDF terkirim ke folder Drive <strong>${safe(cadDriveFolderName(p))}</strong>${driveUrl?` · <a href="${safe(driveUrl)}" target="_blank" rel="noopener">Lihat folder ↗</a>`:""}`;
+    msgEl.className="form-msg ok";
+  }
+}
+
+async function submitInfoRow(p,btn){
+  if(!p||!btn)return;
+  const original=btn.textContent;
+  btn.disabled=true;
+  btn.textContent="⏳ Submit…";
+  markSync([infoStoreKey,branchEditsKey,customBranchKey]);
+  const ok=await waitSyncIdle();
+  btn.disabled=false;
+  if(ok){
+    btn.textContent="✅ Tersubmit";
+    setTimeout(()=>{btn.textContent=original},2500);
+  }else{
+    btn.textContent="⚠ Gagal";
+    setTimeout(()=>{btn.textContent=original},3000);
+  }
+}
+
+function renderInfo(){
+  const q=document.getElementById("infoSearch").value.toLowerCase();
+  const list=sortList(projects.filter(p=>matchesSearch(p,q)),document.getElementById("infoSort").value,renovationPercent);
+  document.getElementById("infoTable").innerHTML=`<thead><tr><th>Branch / Wilayah</th><th>Tahun</th><th>Informasi Ruko</th><th>Survey / Aanwijzing</th><th>Keterangan Gambar (CAD)</th><th>Negosiasi</th><th>PR / PO Renovasi</th><th>Start Renovasi</th><th>Deadline</th><th>Nomor PO</th><th>PIC Facility Project</th><th>Submit</th></tr></thead><tbody>
+    ${list.map(p=>{
+      const ruko=infoValue(p,"ruko",defaultRuko(p));
+      const survey=infoValue(p,"survey",defaultStage(p));
+      const negosiasi=infoValue(p,"negosiasi",defaultStage(p));
+      const prpo=infoValue(p,"prpo",defaultStage(p));
+      const startRenovasi=infoValue(p,"startRenovasi","");
+      const deadline=infoValue(p,"deadline","");
+      const nomorPo=infoValue(p,"nomorPo","");
+      const pic=infoValue(p,"pic","");
+      const cadStatus=cadStatusSummary(p);
+      const opts=(arr,cur)=>arr.map(o=>`<option ${o===cur?"selected":""}>${safe(o)}</option>`).join("");
+      return `<tr data-row-id="${p.id}"><td class="branch-cell">${safe(p.branch)}<span class="meta">${safe(p.area||"Area belum diisi")} · ${safe(p.ro||"—")} · CC ${safe(p.cost||"—")}</span></td>
+        <td>${tahunSelect(p)}</td>
+        <td><select data-info="ruko">${opts(rukoOptions,ruko)}</select></td>
+        <td><select data-info="survey">${opts(stageOptions,survey)}</select></td>
+        <td class="cad-notes-cell">${cadStatus?`<span class="badge ${cadStatus==="Done"?"done":"progress"}" title="Otomatis dari Status Gambar halaman CAD (upload PDF & Revisi/Comment user)">${safe(cadStatus)}</span>`:'<span class="meta">Belum ada data CAD</span>'}</td>
+        <td><select data-info="negosiasi">${opts(stageOptions,negosiasi)}</select></td>
+        <td><select data-info="prpo">${opts(stageOptions,prpo)}</select></td>
+        <td><input type="date" data-info="startRenovasi" value="${safe(startRenovasi)}" title="Pilih tanggal mulai renovasi"></td>
+        <td><input type="date" data-info="deadline" value="${safe(deadline)}" title="Pilih tanggal deadline"></td>
+        <td><input type="text" data-info="nomorPo" value="${safe(nomorPo)}" placeholder="Ketik nomor PO"></td>
+        <td><input type="text" data-info="pic" value="${safe(pic)}" placeholder="Ketik PIC"></td>
+        <td><button type="button" class="button submit-row-btn" data-submit-row="${p.id}" title="Submit data branch ini ke dashboard bersama">⬆ Submit Data</button></td></tr>`;
+    }).join("")}
+  </tbody>`;
+  document.querySelectorAll("#infoTable select[data-info],#infoTable input[data-info]").forEach(el=>el.addEventListener("change",()=>{
+    const tr=el.closest("tr");
+    const p=projects.find(x=>x.id===Number(tr?.dataset.rowId));
+    if(!p)return;
+    const field=el.dataset.info;
+    if(field==="tahun"){setBranchTahun(p,el.value);renderInfo();return}
+    const val=(el.tagName==="INPUT"&&el.type==="text")?el.value.trim():el.value;
+    saveInfoField(p,field,val);
+    if(field==="startRenovasi"||field==="deadline")renderCalendar();
+  }));
+  document.querySelectorAll("#infoTable .submit-row-btn").forEach(btn=>btn.addEventListener("click",()=>{
+    const p=projects.find(x=>x.id===Number(btn.dataset.submitRow));
+    if(p)submitInfoRow(p,btn);
+  }));
+}
+function normalizeBranch(name){return String(name||"").trim().replace(/\s+/g," ").toLowerCase()}
+function branchOccurrence(p){
+  const name=normalizeBranch(p.branch);
+  return projects.slice(0,p.id-1).filter(x=>normalizeBranch(x.branch)===name).length+1;
+}
+const worksheetSummary={
+  "biznet branch kapuas kualakapuas|1":{renovation:11.11},
+  "biznet branch tangerang cikupa (migrasi)|1":{renovation:80.56},
+  "biznet warehouse sleman banyuraden|1":{renovation:25},
+  "biznet branch malang kepanjen|1":{renovation:44.44},
+  "biznet branch jakarta kebagusan city|1":{renovation:55.56},
+  "biznet branch sleman tirtomartani|1":{renovation:25},
+  "biznet branch asahan kisaran|1":{renovation:100},
+  "biznet branch rokan hilir bagan batu|1":{renovation:77.78},
+  "biznet branch rokan hilir ujung tanjung|1":{renovation:88.89},
+  "biznet branch kampar bangkinang|1":{renovation:83.33},
+  "biznet branch pariaman|1":{renovation:75},
+  "biznet branch batam piayu|1":{renovation:11.11},
+  "biznet branch bekasi jaka setia|1":{renovation:100}
+};
+function cumulativeFor(p){
+  const key=`${normalizeBranch(p.branch)}|${branchOccurrence(p)}`;
+  const source=worksheetSummary[key]||{};
+  let renovation=source.renovation;
+  if(progressStore[String(p.id)])renovation=renovationPercent(p);
+  else if(renovation===undefined)renovation=p.id<=41?100:renovationPercent(p);
+  const st=kumulatifFor(p);
+  const networks=kumulatifPercent("networks",st.networks);
+  const backbone=kumulatifPercent("backbone",st.backbone);
+  const spopLive=kumulatifPercent("spopLive",st.spopLive);
+  return {renovation,networks,backbone,spopLive,total:renovation*.85+networks*.05+backbone*.05+spopLive*.05};
+}
+/* ===== DEFINISI DONE & PLANNING (kumulatif) =====
+   Done hanya bila Total Progress Kumulatif = 100%: Renovasi Konstruksi
+   (berbobot) 100% DAN Perangkat Networks = Installed (100%), Project
+   Backbone = Done (100%), SPOP Live = Live (100%) — 85%+5%+5%+5% = 100%.
+   Dipakai seragam di KPI, milestone, rekap area, peta, kalender & export. */
+function isProjectDone(p){return cumulativeFor(p).total>=99.999}
+function isProjectPlanning(p){return cumulativeFor(p).total<=0.001}
+function kumulatifCards(p){
+  const s=cumulativeFor(p),st=kumulatifFor(p);
+  return [
+    {label:"Progress Renovasi Konstruksi",value:fmt(s.renovation)},
+    {label:"Progress Perangkat Networks",value:`${st.networks} · ${fmt(s.networks)}`},
+    {label:"Progress Project Backbone",value:`${st.backbone} · ${fmt(s.backbone)}`},
+    {label:"Progress SPOP Live",value:`${st.spopLive} · ${fmt(s.spopLive)}`},
+    {label:"Total Progress Kumulatif",value:fmt(s.total),total:true}
+  ];
+}
+function kumGridHtml(p){
+  return `<div class="kum-grid">${kumulatifCards(p).map(c=>`<div class="kum-card${c.total?" total":""}"><strong>${safe(c.label)}</strong><span>${safe(c.value)}</span></div>`).join("")}</div>
+    <div class="small-muted" style="margin-top:8px">Total kumulatif = Renovasi Konstruksi × 85% + Perangkat Networks × 5% + Project Backbone × 5% + SPOP Live × 5% = 100%. Project Done hanya bila total ini mencapai 100%.</div>`;
+}
+
+const photoTypes=["Facade","Store","SPOP","Office"];
+function photoKey(p,type){return `${p.id}-${type}`}
+function photoEntry(key){
+  /* Prioritas: foto asli di browser ini → salinan tampilan bersama (dari perangkat lain) */
+  const raw=photoStore[key];
+  if(raw){
+    if(typeof raw==="string")return {data:raw,uploadedAt:null,shared:false};
+    if(raw.data)return {data:raw.data,uploadedAt:raw.uploadedAt||null,shared:false};
+  }
+  const sh=sharedThumbs[key];
+  if(sh){
+    if(typeof sh==="string")return {data:sh,uploadedAt:null,shared:true};
+    if(sh.data)return {data:sh.data,uploadedAt:sh.uploadedAt||null,shared:true};
+  }
+  return null;
+}
+function photoDataAt(key){const e=photoEntry(key);return e?e.data:""}
+let selectedDocsProjectIndex=null;
+let selectedProgressProjectIndex=null;
+let selectedWeeklyProjectIndex=null;
+let selectedInfoBranchName=null;
+
+const PARTIAL_LIMIT=10;
+
+function sanitizeDriveName(v){return String(v||"").replace(/[\\/:*?"<>|]/g,"-").replace(/\s+/g," ").trim()}
+function driveDateStamp(){
+  const d=new Date(),pad=n=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function driveParts(p){
+  const parts=[sanitizeDriveName(p.branch)];
+  if(p.ro)parts.push("RO "+sanitizeDriveName(p.ro));
+  if(p.cost)parts.push("CC "+sanitizeDriveName(p.cost));
+  if(p.tahun)parts.push("Tahun "+p.tahun);
+  return parts;
+}
+function driveFolderName(p){return [...driveParts(p),"Upload "+driveDateStamp()].join(" - ")}
+function driveFileName(p,type){return [...driveParts(p),"Area "+sanitizeDriveName(type),"upload-"+driveDateStamp()+".jpg"].join(" - ")}
+function setDriveMessage(html){
+  const el=document.getElementById("driveMessage");
+  if(el)el.innerHTML=html;
+}
+function updateDriveMessage(){
+  const el=document.getElementById("driveMessage");
+  if(!el)return;
+  if(selectedDocsProjectIndex===null){
+    setDriveMessage('Pilih branch untuk melihat nama folder tujuan. Koneksi ke Google Drive sudah aktif otomatis — tidak perlu memasukkan URL.');
+    return;
+  }
+  const p=projects[selectedDocsProjectIndex];
+  const count=photoTypes.filter(t=>photoDataAt(photoKey(p,t))).length;
+  setDriveMessage(`Folder tujuan: <strong>${safe(driveFolderName(p))}</strong> · foto siap: <strong>${count}/4</strong> · koneksi Drive aktif`);
+}
+function initDriveTools(){
+  document.getElementById("submitDocsButton").addEventListener("click",submitDocsData);
+}
+/* Kompresi adaptif: cari resolusi & kualitas tertinggi yang masih aman
+   tersinkron lewat Google Sheet (batas ±50.000 karakter per sel) */
+async function makeAdaptiveThumb(src){
+  for(const [w,h] of THUMB_SIZES){
+    for(const q of THUMB_QUALITIES){
+      try{
+        const out=await resizeDataUrl(src,w,h,q);
+        if(out&&out.length<=THUMB_MAX_CHARS)return out;
+      }catch(e){}
+    }
+  }
+  try{return await resizeDataUrl(src,240,320,0.3)}catch(e){return ""}
+}
+/* Buat/tingkatkan salinan tampilan untuk foto lokal — termasuk foto lama
+   yang diunggah sebelum pembaruan, sehingga cukup klik Submit Data sekali
+   tanpa memilih ulang foto agar tajam di semua pengguna */
+async function ensureThumbsForBranch(p){
+  for(const t of photoTypes){
+    const key=photoKey(p,t);
+    const local=photoStore[key];
+    if(!local||!local.data)continue;
+    const existing=sharedThumbs[key];
+    if(existing){
+      const lt=Date.parse(local.uploadedAt||""),et=Date.parse(existing.uploadedAt||"");
+      /* Lewati bila salinan tersinkron lebih baru (mis. diganti/dihapus dari perangkat lain) */
+      if(Number.isFinite(lt)&&Number.isFinite(et)&&lt<et)continue;
+      /* Lewati bila salinan sudah mendekati kualitas maksimum yang mungkin */
+      if(existing.data&&existing.data.length>THUMB_MAX_CHARS*0.92)continue;
+    }
+    try{
+      const thumb=await makeAdaptiveThumb(local.data);
+      if(thumb)saveThumbLocal(key,{data:thumb,uploadedAt:local.uploadedAt||new Date().toISOString()});
+    }catch(e){}
+  }
+}
+async function submitDocsData(){
+  if(selectedDocsProjectIndex===null){alert("Cari dan pilih branch terlebih dahulu.");return}
+  const msgEl=document.getElementById("submitDocsMessage");
+  const p=projects[selectedDocsProjectIndex];
+  const localCount=photoTypes.filter(t=>{const e=photoStore[photoKey(p,t)];return e&&e.data}).length;
+  const anyVisible=photoTypes.some(t=>{const e=photoEntry(photoKey(p,t));return e&&e.data});
+  if(!anyVisible){alert("Belum ada foto pada branch ini. Unggah dulu di kotak dokumentasi.");return}
+  if(msgEl)msgEl.className="form-msg";
+  if(localCount){
+    if(msgEl)msgEl.textContent="⏳ Mengirim foto ke Google Drive…";
+    const sent=await sendPhotosToDrive();
+    if(!sent){
+      if(msgEl){msgEl.textContent="❌ Pengiriman foto ke Google Drive gagal — periksa koneksi internet lalu klik Submit Data kembali.";msgEl.className="form-msg err"}
+      return;
+    }
+  }
+  /* Buat/tingkatkan salinan tampilan kualitas tinggi (termasuk foto lama),
+     lalu sinkronkan agar foto terakhir branch ini tajam di semua pengguna */
+  if(msgEl)msgEl.textContent="⏳ Menyiapkan salinan kualitas tinggi & sinkronisasi…";
+  await ensureThumbsForBranch(p);
+  const thumbKeys=photoTypes.map(t=>thumbStorageKey(photoKey(p,t))).filter(k=>{
+    try{const v=JSON.parse(localStorage.getItem(k)||"null");return v&&v.data}catch(e){return false}
+  });
+  markSync([lastPhotoBranchKey].concat(thumbKeys));
+  const ok=await waitSyncIdle();
+  if(msgEl){
+    msgEl.textContent=ok
+      ?`✅ Dokumentasi ${p.branch} tersubmit — foto asli di Drive & salinan kualitas tinggi tersinkron; sekarang tajam di semua pengguna.`
+      :"⚠ Sinkron gagal (offline) — klik Submit Data lagi; data aman di browser dan akan dikirim ulang otomatis.";
+    msgEl.className=ok?"form-msg ok":"form-msg err";
+  }
+}
+async function sendPhotosToDrive(){
+  if(selectedDocsProjectIndex===null){alert("Cari dan pilih branch terlebih dahulu.");return false}
+  const url=getDriveUrl();
+  const p=projects[selectedDocsProjectIndex];
+  const files=photoTypes.map(t=>({t,src:photoStore[photoKey(p,t)]?photoStore[photoKey(p,t)].data:""})).filter(f=>f.src);
+  if(!files.length){alert("Belum ada foto lokal pada branch ini. Unggah dulu di kotak dokumentasi.");return false}
+  try{
+    const payload={
+      folderName:driveFolderName(p),
+      files:files.map(f=>({name:driveFileName(p,f.t),data:f.src.split(",")[1]||""}))
+    };
+    const res=await fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+    const json=await res.json();
+    if(json.status!=="ok")throw new Error(json.message||"Gagal mengirim.");
+    setDriveMessage(`✅ ${files.length} foto terkirim ke folder Drive <strong>${safe(driveFolderName(p))}</strong> ${json.url?`· <a href="${safe(json.url)}" target="_blank" rel="noopener">Lihat folder ↗</a>`:""}`);
+    return true;
+  }catch(err){
+    setDriveMessage(`❌ Gagal mengirim: ${safe(err.message)} Periksa deployment Apps Script (Execute as: Me, Who has access: Anyone, akhiran /exec) lalu klik Submit Data kembali.`);
+    return false;
+  }
+}
+
+/* ===== GALERI FOTO TERAKHIR — KHUSUS BRANCH YANG DIPILIH, TERSINKRON SEMUA PENGGUNA ===== */
+function renderRecentUploads(){
+  const wrap=document.getElementById("recentUploads");
+  const titleEl=document.getElementById("recentUploadsTitle");
+  if(!wrap)return;
+  /* Pilih branch: yang sedang dipilih di pencarian; bila belum ada,
+     pakai branch dengan unggahan terakhir */
+  let idx=selectedDocsProjectIndex;
+  if(idx===null){
+    const id=getLastPhotoBranchId();
+    if(id!==null){
+      const found=projects.findIndex(p=>p.id===id);
+      if(found>=0)idx=found;
+    }
+  }
+  if(idx===null||!projects[idx]){
+    if(titleEl)titleEl.textContent="Foto Terakhir Diunggah";
+    wrap.innerHTML='<div class="small-muted">Belum ada foto terunggah. Pilih branch lalu unggah foto dan klik ⬆ Submit Data — foto terakhir branch tersebut akan tampil tajam di galeri ini untuk semua pengguna, tanpa perlu dihapus.</div>';
+    return;
+  }
+  const p=projects[idx];
+  if(titleEl)titleEl.textContent=`Foto Terakhir Diunggah — ${p.branch}`;
+  const items=photoTypes.map(type=>({type,key:photoKey(p,type),entry:photoEntry(photoKey(p,type))})).filter(x=>x.entry&&x.entry.data);
+  if(!items.length){
+    wrap.innerHTML=`<div class="small-muted">Belum ada foto terunggah untuk <strong>${safe(p.branch)}</strong>. Unggah foto pada kartu di atas lalu klik ⬆ Submit Data — foto terakhir akan tampil tajam di galeri ini untuk semua pengguna, tanpa perlu dihapus.</div>`;
+    return;
+  }
+  wrap.innerHTML=items.map(it=>`<figure class="recent-photo">
+    <button type="button" class="recent-del" data-recent-del="${safe(it.key)}" title="Hapus foto ini dari dashboard (tersinkron ke semua pengguna)">✕</button>
+    <img src="${it.entry.data}" alt="Dokumentasi ${safe(it.type)} ${safe(p.branch)}">
+    <figcaption><strong>Area ${safe(it.type)}</strong><span>${safe(p.branch)} · ${safe(p.ro||"—")}${it.entry.uploadedAt?` · ${safe(fmtFileStamp(it.entry.uploadedAt))}`:""}${it.entry.shared&&!photoStore[it.key]?" · tersinkron":""}</span></figcaption>
+  </figure>`).join("");
+  wrap.querySelectorAll("[data-recent-del]").forEach(btn=>btn.addEventListener("click",()=>{
+    if(!confirm("Hapus foto ini dari dashboard? Penghapusan juga tersinkron ke semua pengguna (foto asli di Google Drive tidak ikut terhapus)."))return;
+    const key=btn.dataset.recentDel;
+    delete photoStore[key];
+    try{localStorage.setItem(photoStoreKey,JSON.stringify(photoStore))}catch(e){}
+    saveThumbLocal(key,{data:"",uploadedAt:new Date().toISOString()});
+    markSync([thumbStorageKey(key)]);
+    renderDocs();
+    renderWeeklySummary();
+  }));
+}
+
+function renderDocs(){
+  renderRecentUploads();
+  const docsGrid=document.getElementById("docsGrid");
+  if(selectedDocsProjectIndex===null){
+    docsGrid.innerHTML='<div class="small-muted">Cari dan pilih branch pada kotak pencarian di atas untuk mengunggah dokumentasi.</div>';
+    updateDriveMessage();
+    return;
+  }
+  const p=projects[selectedDocsProjectIndex];
+  docsGrid.innerHTML=photoTypes.map(type=>{
+    const url=photoDataAt(photoKey(p,type));
+    return `<div class="upload-item"><div class="upload-heading">Dokumentasi Area ${safe(type)}</div>
+      <label class="upload-box ${url?"has-image":""}" data-photo-key="${photoKey(p,type)}">
+      ${url?`<img src="${url}" alt="Dokumentasi ${safe(type)} ${safe(p.branch)}">`:""}
+      <div class="upload-content"><div class="upload-icon">${url?"":"＋"}</div><div class="upload-title">${url?"Ganti dokumentasi":"Unggah dokumentasi"}</div><div class="upload-hint">${url?safe(p.branch):"Rasio 3:4 · 1080 × 1440 px"}</div></div>
+      <input type="file" accept="image/*" aria-label="Unggah dokumentasi ${safe(type)}"></label></div>`;
+  }).join("");
+  document.querySelectorAll("#docsGrid .upload-box input").forEach(input=>input.addEventListener("change",async e=>{
+    const file=e.target.files?.[0];
+    if(!file)return;
+    const pkey=e.target.closest(".upload-box").dataset.photoKey;
+    try{
+      const data=await resizeImage(file,1080,1440);
+      const stamp=new Date().toISOString();
+      photoStore[pkey]={data:data,uploadedAt:stamp};
+      localStorage.setItem(photoStoreKey,JSON.stringify(photoStore));
+      /* Salinan tampilan kualitas tinggi (kompresi adaptif, hingga 600×800)
+         untuk disinkronkan ke semua pengguna saat Submit Data */
+      try{const thumb=await makeAdaptiveThumb(data);if(thumb)saveThumbLocal(pkey,{data:thumb,uploadedAt:stamp})}catch(e2){}
+      setLastPhotoBranch(p.id);
+      renderDocs();
+    }catch(error){alert("Gambar tidak dapat diproses. Coba file gambar lain.")}
+  }));
+  updateDriveMessage();
+}
+function resizeImage(file,w,h,quality){
+  return new Promise((resolve,reject)=>{
+    const image=new Image(),url=URL.createObjectURL(file);
+    image.onload=()=>{
+      const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext("2d"),scale=Math.max(w/image.width,h/image.height),sw=w/scale,sh=h/scale;
+      ctx.drawImage(image,(image.width-sw)/2,(image.height-sh)/2,sw,sh,0,0,w,h);
+      URL.revokeObjectURL(url);resolve(canvas.toDataURL("image/jpeg",quality||.88));
+    };
+    image.onerror=()=>{URL.revokeObjectURL(url);reject(Error("Image load failed"))};
+    image.src=url;
+  });
+}
+/* Versi untuk dataURL (foto yang sudah tersimpan di browser) —
+   dipakai makeAdaptiveThumb & ensureThumbsForBranch */
+function resizeDataUrl(src,w,h,quality){
+  return new Promise((resolve,reject)=>{
+    const image=new Image();
+    image.onload=()=>{
+      const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext("2d"),scale=Math.max(w/image.width,h/image.height),sw=w/scale,sh=h/scale;
+      ctx.drawImage(image,(image.width-sw)/2,(image.height-sh)/2,sw,sh,0,0,w,h);
+      resolve(canvas.toDataURL("image/jpeg",quality||.35));
+    };
+    image.onerror=()=>reject(Error("Image load failed"));
+    image.src=src;
+  });
+}
+function noteKey(p,item){return `${p.id}-${item.key}`}
+function noteFor(p,item){return weeklyNotes[noteKey(p,item)]||""}
+
+function setupBranchSearch(type){
+  const input=document.getElementById(`${type}BranchSearch`);
+  const results=document.getElementById(`${type}BranchResults`);
+  const selected=document.getElementById(`${type}BranchSelected`);
+  const container=input.closest(".branch-picker");
+  let hideTimer=null;
+  const cancelHide=()=>clearTimeout(hideTimer);
+  const scheduleHide=()=>{cancelHide();hideTimer=setTimeout(()=>{results.innerHTML=""},250)};
+  const hideList=()=>{cancelHide();results.innerHTML=""};
+
+  function applySelection(index){
+    const p=projects[index];
+    if(!p)return;
+    input.value=p.branch;
+    selected.textContent=`Dipilih: ${p.branch} · ${p.ro||"—"} · Cost Center ${p.cost||"—"}`;
+    hideList();
+    if(type==="docs"){selectedDocsProjectIndex=index;renderDocs()}
+    else if(type==="progress"){selectedProgressProjectIndex=index;renderProgressEditor();renderKumulatifEditor()}
+    else{selectedWeeklyProjectIndex=index;renderWeeklySummary()}
+  }
+  function showList(){
+    const q=input.value.trim().toLowerCase();
+    const all=projects.map((p,index)=>({p,index}));
+    const matches=q?all.filter(({p})=>matchesSearch(p,q)):all;
+    if(!matches.length){results.innerHTML='<div class="branch-result"><span>Branch tidak ditemukan.</span></div>';return}
+    let html=matches.slice(0,PARTIAL_LIMIT).map(({p,index})=>`
+      <button type="button" class="branch-result" data-project-index="${index}">
+        <strong>${safe(p.branch)}</strong>
+        <span>${safe(p.ro||"—")} · Cost Center ${safe(p.cost||"—")} · ${safe(p.area||"Area belum diisi")}</span>
+      </button>`).join("");
+    if(matches.length>PARTIAL_LIMIT)html+=`<div class="branch-result branch-more"><span>Menampilkan ${PARTIAL_LIMIT} dari ${matches.length} branch — ketik untuk mempersempit.</span></div>`;
+    results.innerHTML=html;
+    results.querySelectorAll("[data-project-index]").forEach(btn=>btn.addEventListener("click",()=>applySelection(Number(btn.dataset.projectIndex))));
+  }
+  input.addEventListener("focus",showList);
+  input.addEventListener("click",showList);
+  input.addEventListener("mouseenter",showList);
+  input.addEventListener("input",()=>{
+    if(type==="docs")selectedDocsProjectIndex=null;
+    else if(type==="progress")selectedProgressProjectIndex=null;
+    else selectedWeeklyProjectIndex=null;
+    selected.textContent="Belum ada branch dipilih.";
+    if(type==="docs")renderDocs();
+    else if(type==="progress"){renderProgressEditor();renderKumulatifEditor()}
+    else renderWeeklySummary();
+    showList();
+  });
+  input.addEventListener("keydown",e=>{if(e.key==="Escape")hideList()});
+  container.addEventListener("mouseleave",scheduleHide);
+  container.addEventListener("mouseenter",cancelHide);
+  document.addEventListener("mousedown",e=>{if(!container.contains(e.target))hideList()});
+}
+
+function initializeBranchSelects(){
+  setupBranchSearch("docs");
+  setupBranchSearch("progress");
+  setupBranchSearch("weekly");
+}
+
+function setupOverviewSearch(){
+  const input=document.getElementById("overviewBranchSearch");
+  const results=document.getElementById("overviewBranchResults");
+  const container=input.closest(".branch-picker");
+  let hideTimer=null;
+  const cancelHide=()=>clearTimeout(hideTimer);
+  const scheduleHide=()=>{cancelHide();hideTimer=setTimeout(()=>{results.innerHTML=""},250)};
+  const hideList=()=>{cancelHide();results.innerHTML=""};
+  function showList(){
+    const q=input.value.trim().toLowerCase();
+    const matches=q?projects.filter(p=>p.branch.toLowerCase().includes(q)):projects.slice();
+    if(!matches.length){results.innerHTML='<div class="branch-result"><span>Branch tidak ditemukan.</span></div>';return}
+    let html=matches.slice(0,PARTIAL_LIMIT).map(p=>`
+      <button type="button" class="branch-result" data-overview-branch="${safe(p.branch)}">
+        <strong>${safe(p.branch)}</strong>
+        <span>${safe(p.ro||"—")} · Cost Center ${safe(p.cost||"—")} · ${safe(p.area||"Area belum diisi")}</span>
+      </button>`).join("");
+    if(matches.length>PARTIAL_LIMIT)html+=`<div class="branch-result branch-more"><span>Menampilkan ${PARTIAL_LIMIT} dari ${matches.length} branch — ketik untuk mempersempit.</span></div>`;
+    results.innerHTML=html;
+    results.querySelectorAll("[data-overview-branch]").forEach(btn=>btn.addEventListener("click",()=>{
+      input.value=btn.dataset.overviewBranch;
+      hideList();
+      renderOverviewSearch();
+    }));
+  }
+  input.addEventListener("focus",showList);
+  input.addEventListener("click",showList);
+  input.addEventListener("mouseenter",showList);
+  input.addEventListener("keydown",e=>{if(e.key==="Escape")hideList()});
+  container.addEventListener("mouseleave",scheduleHide);
+  container.addEventListener("mouseenter",cancelHide);
+  document.addEventListener("mousedown",e=>{if(!container.contains(e.target))hideList()});
+}
+
+function setupInfoSearchPicker(){
+  const input=document.getElementById("infoSearch");
+  const results=document.getElementById("infoBranchResults");
+  const container=input.closest(".branch-picker");
+  let hideTimer=null;
+  const cancelHide=()=>clearTimeout(hideTimer);
+  const scheduleHide=()=>{cancelHide();hideTimer=setTimeout(()=>{results.innerHTML=""},250)};
+  const hideList=()=>{cancelHide();results.innerHTML=""};
+  function showList(){
+    const q=input.value.trim().toLowerCase();
+    const matches=q?projects.filter(p=>matchesSearch(p,q)):projects.slice();
+    if(!matches.length){results.innerHTML='<div class="branch-result"><span>Branch tidak ditemukan.</span></div>';return}
+    let html=matches.slice(0,PARTIAL_LIMIT).map(p=>`
+      <button type="button" class="branch-result" data-info-search-branch="${p.id}">
+        <strong>${safe(p.branch)}</strong>
+        <span>${safe(p.area||"—")} · ${safe(p.ro||"—")} · CC ${safe(p.cost||"—")}</span>
+      </button>`).join("");
+    if(matches.length>PARTIAL_LIMIT)html+=`<div class="branch-result branch-more"><span>Menampilkan ${PARTIAL_LIMIT} dari ${matches.length} branch — ketik untuk mempersempit.</span></div>`;
+    results.innerHTML=html;
+    results.querySelectorAll("[data-info-search-branch]").forEach(btn=>btn.addEventListener("click",()=>{
+      const p=projects.find(x=>x.id===Number(btn.dataset.infoSearchBranch));
+      if(p){
+        input.value=p.branch;
+        selectedInfoBranchName=p.branch;
+        hideList();
+        renderInfo();
+        const row=document.querySelector(`#infoTable tr[data-row-id="${p.id}"]`);
+        if(row)row.scrollIntoView({block:"center",behavior:"smooth"});
+      }
+    }));
+  }
+  input.addEventListener("focus",showList);
+  input.addEventListener("click",showList);
+  input.addEventListener("mouseenter",showList);
+  input.addEventListener("input",()=>{selectedInfoBranchName=null;showList()});
+  input.addEventListener("keydown",e=>{if(e.key==="Escape")hideList()});
+  container.addEventListener("mouseleave",scheduleHide);
+  container.addEventListener("mouseenter",cancelHide);
+  document.addEventListener("mousedown",e=>{if(!container.contains(e.target))hideList()});
+}
+
+function renderProgressEditor(){
+  const editor=document.getElementById("progressItemEditor");
+  const total=document.getElementById("progressTotal");
+  const message=document.getElementById("progressEditorMessage");
+
+  if(selectedProgressProjectIndex===null){
+    editor.innerHTML="";
+    total.textContent="Total progress berbobot: —";
+    message.textContent="Cari dan pilih branch untuk melihat atau mengubah status item progress.";
+    return;
+  }
+
+  const p=projects[selectedProgressProjectIndex],status=statusesFor(p);
+  message.textContent=`Status dan keterangan item untuk ${p.branch}. Perubahan tersimpan bersama di Google Sheet — setelah selesai, klik ⬆ Submit Data di bawah.`;
+  editor.innerHTML=items.map(i=>{
+    const current=status[i.key]||"None",percent=itemPercent(current),contribution=i.weight*percent/100;
+    return `<div class="item-field"><label for="item-${i.key}">${safe(i.label)} · bobot ${i.weight}%</label>
+      <select id="item-${i.key}" data-item="${i.key}">${statusOptions.map(o=>`<option ${o===current?"selected":""}>${safe(o)}</option>`).join("")}</select>
+      <div class="item-percent"><span>Progress item</span><strong>${percent}%</strong></div>
+      <div class="item-percent"><span>Kontribusi renovasi</span><strong>${contribution.toFixed(2)}%</strong></div>
+      <label for="note-${i.key}" style="margin-top:12px">Keterangan item</label>
+      <textarea id="note-${i.key}" data-note="${i.key}" placeholder="Contoh: belum dikerjakan, sedang proses, atau sudah selesai">${safe(noteFor(p,i))}</textarea></div>`;
+  }).join("");
+  total.innerHTML=`Total progress renovasi konstruksi: <strong>${fmt(renovationPercent(p))}</strong> · Project Done hanya bila Total Progress Kumulatif (di bawah) mencapai 100%.`;
+  editor.querySelectorAll("textarea[data-note]").forEach(t=>t.addEventListener("input",()=>{
+    const item=items.find(x=>x.key===t.dataset.note);
+    weeklyNotes[noteKey(p,item)]=t.value;
+    saveWeeklyNotes();
+  }));
+  editor.querySelectorAll("select[data-item]").forEach(sel=>sel.addEventListener("change",()=>{
+    if(!progressStore[String(p.id)])progressStore[String(p.id)]={...initialStatuses(p)};
+    progressStore[String(p.id)][sel.dataset.item]=sel.value;
+    saveProgressStore();
+    renderProgressEditor();renderKumulatifEditor();renderWeeklySummary();renderKpis();renderAreaSummary();
+    renderMilestoneChart();renderMilestoneRecap();
+  }));
+}
+
+function renderKumulatifEditor(){
+  const editor=document.getElementById("kumulatifEditor");
+  if(selectedProgressProjectIndex===null){
+    editor.innerHTML='<div class="small-muted">Cari dan pilih branch pada bagian di atas untuk mengisi progress kumulatif.</div>';
+    return;
+  }
+  const p=projects[selectedProgressProjectIndex],st=kumulatifFor(p);
+  editor.innerHTML=kumulatifDefs.map(d=>{
+    const cur=st[d.key],pct=kumulatifPercent(d.key,cur);
+    return `<div class="item-field"><label for="kum-${d.key}">${safe(d.label)}</label>
+      <select id="kum-${d.key}" data-kum="${d.key}">${d.options.map(o=>`<option ${o===cur?"selected":""}>${safe(o)}</option>`).join("")}</select>
+      <div class="item-percent"><span>Progress</span><strong>${pct.toFixed(2)}%</strong></div>
+      <div class="item-percent"><span>Kontribusi kumulatif (bobot 5%)</span><strong>${(pct*.05).toFixed(2)}%</strong></div></div>`;
+  }).join("");
+  editor.querySelectorAll("select[data-kum]").forEach(sel=>sel.addEventListener("change",()=>{
+    if(!manualKumulatif[String(p.id)])manualKumulatif[String(p.id)]={};
+    manualKumulatif[String(p.id)][sel.dataset.kum]=sel.value;
+    saveManualKumulatif();
+    renderKumulatifEditor();
+    renderWeeklySummary();
+    renderKpis();
+    renderAreaSummary();
+    renderMilestoneChart();
+    renderMilestoneRecap();
+  }));
+}
+
+function renderWeeklySummary(){
+  const wrap=document.getElementById("weeklySummary");
+  if(selectedWeeklyProjectIndex===null){
+    wrap.innerHTML='<div class="small-muted">Cari dan pilih branch untuk melihat ringkasan laporan.</div>';
+    return;
+  }
+  const p=projects[selectedWeeklyProjectIndex];
+  const summary=cumulativeFor(p);
+  const date=new Date().toLocaleString("id-ID",{day:"2-digit",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  const startTxt=infoValue(p,"startRenovasi","")?fmtIso(infoValue(p,"startRenovasi","")):"—";
+  const deadlineTxt=infoValue(p,"deadline","")?fmtIso(infoValue(p,"deadline","")):"—";
+  const info=[
+    {label:"Branch",value:p.branch},
+    {label:"Area",value:p.area||"Belum diisi"},
+    {label:"Regional Office",value:p.ro||"—"},
+    {label:"Cost Center",value:p.cost||"—"},
+    {label:"Status",value:projectStatus(summary.total)},
+    {label:"Tahun",value:p.tahun?String(p.tahun):"—"},
+    {label:"Start Renovasi",value:startTxt},
+    {label:"Deadline",value:deadlineTxt}
+  ];
+  const rows=items.map(i=>{
+    const status=statusesFor(p)[i.key]||"None",note=noteFor(p,i).trim();
+    return `<tr><td>${safe(i.label)}</td><td>${i.weight}%</td><td>${safe(status)}</td><td>${itemPercent(status)}%</td><td>${note?safe(note).replace(/\n/g,"<br>"):"—"}</td></tr>`;
+  }).join("");
+  const photos=photoTypes.map(type=>{
+    const src=photoDataAt(photoKey(p,type));
+    return `<div class="mini-photo">${src?`<img src="${src}" alt="Dokumentasi ${safe(type)} ${safe(p.branch)}">`:`Belum ada dokumentasi ${safe(type)}`}</div>`;
+  }).join("");
+  wrap.innerHTML=`
+    <div class="info-grid">${info.map(c=>`<div class="kum-card"><strong>${safe(c.label)}</strong><span>${safe(c.value)}</span></div>`).join("")}</div>
+    <h3>Progress Renovasi</h3>
+    <div class="table-wrap" style="max-height:none"><table><thead><tr><th>Item Renovation</th><th>Bobot</th><th>Status</th><th>Progress Item</th><th>Keterangan</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <h3>Rekap Progress Project</h3>
+    ${kumGridHtml(p)}
+    <h3>Dokumentasi Project</h3>
+    <div class="mini-photos">${photos}</div>
+    <div class="small-muted" style="margin-top:10px">Ringkasan dibuat: ${safe(date)} · Klik Download PDF untuk mencetak laporan.</div>`;
+}
+
+function reportLogo(){
+  if(logoOkSrc){
+    let src=logoOkSrc;
+    try{src=new URL(logoOkSrc,location.href).href}catch(e){}
+    return `<img src="${src}" alt="Logo Biznet" style="width:100%;height:auto">`;
+  }
+  const svg=document.getElementById("brandLogoFallback");
+  return svg?svg.outerHTML:"";
+}
+
+function downloadWeeklyReport(){
+  if(selectedWeeklyProjectIndex===null){
+    alert("Cari dan pilih branch terlebih dahulu.");
+    return;
+  }
+  const p=projects[selectedWeeklyProjectIndex];
+  const date=new Date().toLocaleString("id-ID",{day:"2-digit",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  const summary=cumulativeFor(p),kum=kumulatifFor(p);
+  const tahunText=p.tahun?String(p.tahun):"—";
+  const startTxt=infoValue(p,"startRenovasi","")?fmtIso(infoValue(p,"startRenovasi","")):"—";
+  const deadlineTxt=infoValue(p,"deadline","")?fmtIso(infoValue(p,"deadline","")):"—";
+  const rows=items.map(i=>{
+    const status=statusesFor(p)[i.key]||"None",note=noteFor(p,i).trim();
+    return `<tr><td>${safe(i.label)}</td><td>${i.weight}%</td><td>${safe(status)}</td><td>${itemPercent(status)}%</td><td>${note?safe(note).replace(/\n/g,"<br>"):"—"}</td></tr>`;
+  }).join("");
+  const photos=photoTypes.map(type=>{
+    const src=photoDataAt(photoKey(p,type));
+    return `<article class="photo"><h2>Dokumentasi Area ${safe(type)}</h2>${src?`<img src="${src}" alt="Dokumentasi Area ${safe(type)}">`:`<div class="no-photo">Belum ada dokumentasi</div>`}</article>`;
+  }).join("");
+  const w=window.open("","_blank");
+  if(!w){alert("Pop-up diblokir browser. Izinkan pop-up lalu coba kembali.");return}
+
+  w.document.write(`<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Weekly Report Biznet Facility Project - ${safe(p.branch)}</title>
+<style>
+*{box-sizing:border-box}@page{size:A4 portrait;margin:12mm}
+body{margin:0;color:#182637;font:8px Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.report-page{position:relative;min-height:273mm;padding-bottom:12mm;page-break-after:always;break-after:page}
+.report-page:last-child{page-break-after:auto;break-after:auto}
+.page-footer{position:absolute;right:0;bottom:2mm;left:0;color:#718096;font-size:8px;font-weight:bold;letter-spacing:1px;text-align:center}
+.header{display:grid;grid-template-columns:135px 1fr;gap:14px;align-items:center;padding:10px 12px;border:1px solid #dce6ef;border-top:4px solid #09a9d6;border-radius:8px}
+.header img,.header svg{width:100%;height:auto}.kicker{color:#087dc2;font-size:8px;font-weight:bold;letter-spacing:1px}
+h1{margin:5px 0;color:#0b246b;font-size:18px}h2{margin:0 0 7px;color:#0b246b;font-size:10px}
+.muted{color:#718096;font-size:8px;line-height:1.5}.branch{margin-top:9px;padding:10px;border:1px solid #dce6ef;border-top:3px solid #087dc2;border-radius:8px}
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.info div{padding:6px;border:1px solid #e3eaf1;border-radius:5px;background:#f7fafc}
+.info strong,.info span{display:block}.info strong{color:#718096;font-size:7px;text-transform:uppercase}.info span{margin-top:3px;font-size:8px;font-weight:bold}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:7px}
+th,td{padding:5px;border:1px solid #e3eaf1;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+th{background:#f1f6fa;color:#526579;font-size:7px;text-transform:uppercase}
+th:nth-child(1){width:23%}th:nth-child(2){width:9%}th:nth-child(3){width:19%}th:nth-child(4){width:13%}th:nth-child(5){width:36%}
+.summary-title{margin:9px 0 6px;color:#0b246b;font-size:10px}.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
+.summary-card{padding:7px;border:1px solid #dce6ef;border-radius:5px;background:#f7fafc}
+.summary-card strong{display:block;margin-bottom:3px;color:#718096;font-size:7px;text-transform:uppercase}
+.summary-card span{color:#087dc2;font-size:11px;font-weight:bold}
+.summary-card.total{border-color:#087dc2;background:#e8f5fc}.summary-card.total span{color:#0b246b}
+.formula{margin-top:6px;padding:7px;border-radius:5px;background:#f1f9fd;color:#526579;font-size:7px;line-height:1.4}
+.photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.photo{padding:7px;border:1px solid #e3eaf1;border-radius:6px;break-inside:avoid}
+.photo h2{margin:0 0 5px;font-size:9px}.photo img,.no-photo{display:block;width:76mm;height:101mm;margin:auto;object-fit:cover;background:#f5f7f9}
+.no-photo{display:grid;place-items:center;color:#718096;font-size:9px}
+@media screen{body{padding:15px;background:#eef2f6}.report-page{width:210mm;min-height:297mm;margin:0 auto 15px;padding:12mm;background:#fff;box-shadow:0 2px 12px #0002}}
+</style></head><body>
+<section class="report-page">
+<header class="header">${reportLogo()}<div><div class="kicker">BIZNET FACILITY &amp; CONSTRUCTION</div><h1>Weekly Report Biznet Facility Project</h1><div class="muted"><strong>Progress diperbarui sampai:</strong> ${safe(date)}<br><strong>Branch:</strong> ${safe(p.branch)} · <strong>Tahun:</strong> ${safe(tahunText)}</div></div></header>
+<section class="branch"><h2>Informasi Branch</h2>
+<div class="info"><div><strong>Branch</strong><span>${safe(p.branch)}</span></div><div><strong>Area</strong><span>${safe(p.area||"Belum diisi")}</span></div><div><strong>Regional Office</strong><span>${safe(p.ro||"—")}</span></div><div><strong>Cost Center</strong><span>${safe(p.cost||"—")}</span></div><div><strong>Status</strong><span>${projectStatus(summary.total)}</span></div><div><strong>Tahun</strong><span>${safe(tahunText)}</span></div><div><strong>Start Renovasi</strong><span>${safe(startTxt)}</span></div><div><strong>Deadline</strong><span>${safe(deadlineTxt)}</span></div><div><strong>Tanggal laporan</strong><span>${safe(date)}</span></div></div>
+<h2 class="summary-title">Progress Renovation</h2>
+<table><thead><tr><th>Item Renovation</th><th>Bobot</th><th>Status</th><th>Progress Item</th><th>Keterangan</th></tr></thead><tbody>${rows}</tbody></table>
+<h2 class="summary-title">Rekap Progress Project</h2>
+<div class="summary-grid">
+<div class="summary-card"><strong>Progress Renovasi Konstruksi</strong><span>${summary.renovation.toFixed(2)}%</span></div>
+<div class="summary-card"><strong>Progress Perangkat Networks</strong><span>${safe(kum.networks)} · ${summary.networks.toFixed(2)}%</span></div>
+<div class="summary-card"><strong>Progress Project Backbone</strong><span>${safe(kum.backbone)} · ${summary.backbone.toFixed(2)}%</span></div>
+<div class="summary-card"><strong>Progress SPOP Live</strong><span>${safe(kum.spopLive)} · ${summary.spopLive.toFixed(2)}%</span></div>
+<div class="summary-card total"><strong>Total Progress Kumulatif</strong><span>${summary.total.toFixed(2)}%</span></div>
+</div>
+<div class="formula">Perhitungan total kumulatif: Renovasi Konstruksi × 85% + Perangkat Networks × 5% + Project Backbone × 5% + SPOP Live × 5% = 100%. Project Done hanya bila total ini mencapai 100%.</div>
+</section><footer class="page-footer">Confidential Dokumentation</footer></section>
+<section class="report-page"><h1>Dokumentasi Project</h1><div class="muted" style="margin-bottom:9px"><strong>Branch:</strong> ${safe(p.branch)} · <strong>Tahun:</strong> ${safe(tahunText)} · ${safe(date)}</div><div class="photos">${photos}</div><footer class="page-footer">Confidential Dokumentation</footer></section>
+<script>window.onload=()=>setTimeout(()=>window.print(),500);<\/script>
+</body></html>`);
+  w.document.close();
+}
+
+function setBranchMessage(text,state){
+  const el=document.getElementById("inputBranchMessage");
+  el.textContent=text;
+  el.className="form-msg"+(state===true?" ok":state===false?" err":"");
+}
+function clearBranchForm(){
+  ["newBranchName","newBranchRo","newBranchCost","newBranchLat","newBranchLng"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("newBranchArea").value="";
+}
+function collectBranchForm(){
+  const name=document.getElementById("newBranchName").value.trim();
+  const area=document.getElementById("newBranchArea").value.trim().toUpperCase();
+  const ro=document.getElementById("newBranchRo").value.trim();
+  const cost=document.getElementById("newBranchCost").value.trim();
+  const latRaw=document.getElementById("newBranchLat").value.trim();
+  const lngRaw=document.getElementById("newBranchLng").value.trim();
+  if(!name){setBranchMessage("Nama branch wajib diisi.",false);return null}
+  if(!area){setBranchMessage("Area wajib diisi (contoh: EAST, WEST, SUMATRA).",false);return null}
+  let lat=null,lng=null;
+  if(latRaw!==""||lngRaw!==""){
+    lat=Number(latRaw);lng=Number(lngRaw);
+    if(latRaw===""||lngRaw===""||!isFinite(lat)||!isFinite(lng)||lat<-90||lat>90||lng<-180||lng>180){
+      setBranchMessage("Latitude (-90 s/d 90) dan Longitude (-180 s/d 180) harus diisi berpasangan dengan angka yang valid.",false);return null;
+    }
+  }
+  return {branch:name,area,ro,cost,lat,lng};
+}
+function refreshAreaOptions(){
+  const areas=[];
+  projects.forEach(p=>{const a=String(p.area||"").trim();if(a&&!areas.includes(a))areas.push(a)});
+  document.getElementById("areaOptions").innerHTML=areas.map(a=>`<option value="${safe(a)}"></option>`).join("");
+}
+function addBranch(){
+  const data=collectBranchForm();
+  if(!data)return;
+  const duplicate=projects.find(p=>normalizeBranch(p.branch)===normalizeBranch(data.branch)&&(p.area||"")===data.area&&String(p.cost||"").trim().toLowerCase()===data.cost.toLowerCase());
+  if(duplicate){setBranchMessage("Branch dengan nama, area, dan cost center yang sama sudah terdaftar.",false);return}
+  customBranches.push({id:projects.reduce((max,p)=>Math.max(max,p.id),0)+1,...data});
+  saveCustomBranches();
+  rebuildProjects();
+  refreshAreaOptions();
+  renderKpis();renderAreaSummary();renderInfo();renderCustomList();
+  renderDashboardExtras();renderCAD();
+  renderMapMarkers();
+  clearBranchForm();
+  setBranchMessage(`Branch "${data.branch}" berhasil ditambahkan${data.lat!==null&&data.lng!==null?" — pin lokasinya langsung tampil di peta Mapping Plan Project":""}. Atur Tahun-nya lewat kolom Tahun pada tabel Pra-Konstruksi & Informasi Project bila diperlukan.`,true);
+}
+function renderCustomList(){
+  const wrap=document.getElementById("customBranchList");
+  if(!customBranches.length){wrap.innerHTML="";return}
+  wrap.innerHTML=`<div class="small-muted" style="margin-top:14px">Branch tambahan tersimpan bersama di Google Sheet: ${customBranches.length}</div>`+
+    customBranches.map(c=>{
+      const coords=Number.isFinite(c.lat)&&Number.isFinite(c.lng)?` · ${c.lat}, ${c.lng}`:"";
+      const tahun=c.tahun?` · Tahun ${safe(c.tahun)}`:"";
+      return `<div class="custom-branch-row"><div><strong>${safe(c.branch)}</strong><span class="meta">${safe(c.area)} · ${safe(c.ro||"—")} · CC ${safe(c.cost||"—")}${coords}${tahun}</span></div><div class="toolbar"><button class="button ghost" type="button" data-edit-branch="${c.id}">Edit Informasi</button><button class="button danger" type="button" data-delete-branch="${c.id}">Hapus</button></div></div>`;
+    }).join("");
+  wrap.querySelectorAll("[data-edit-branch]").forEach(btn=>btn.addEventListener("click",()=>{
+    const p=projects.find(x=>x.id===Number(btn.dataset.editBranch));
+    if(p)openBranchEditorFor(p);
+  }));
+  wrap.querySelectorAll("[data-delete-branch]").forEach(btn=>btn.addEventListener("click",()=>{
+    const id=Number(btn.dataset.deleteBranch);
+    customBranches=customBranches.filter(c=>c.id!==id);
+    delete progressStore[String(id)];
+    delete branchEdits[String(id)];
+    delete infoStore[String(id)];
+    delete manualKumulatif[String(id)];
+    delete cadStore[String(id)];
+    Object.keys(weeklyNotes).filter(key=>key.split("-")[0]===String(id)).forEach(key=>delete weeklyNotes[key]);
+    Object.keys(photoStore).filter(key=>key.split("-")[0]===String(id)).forEach(key=>{
+      delete photoStore[key];
+      saveThumbLocal(key,{data:"",uploadedAt:new Date().toISOString()});
+      markSync([thumbStorageKey(key)]);
+    });
+    Object.keys(cadImageStore).filter(key=>key.split(":")[0]===String(id)).forEach(key=>{releasePdfObjectUrl(key);delete cadImageStore[key]});
+    Object.keys(cadMemoryStore).filter(key=>key.split(":")[0]===String(id)).forEach(key=>delete cadMemoryStore[key]);
+    saveProgressStore();
+    saveWeeklyNotes();
+    try{localStorage.setItem(photoStoreKey,JSON.stringify(photoStore))}catch(e){}
+    try{localStorage.setItem(cadImageStoreKey,JSON.stringify(cadImageStore))}catch(e){}
+    saveCadStore();
+    saveCustomBranches();saveBranchEdits();saveInfoStore();saveManualKumulatif();
+    if(getLastPhotoBranchId()===id){try{localStorage.removeItem(lastPhotoBranchKey)}catch(e){}}
+    selectedDocsProjectIndex=null;
+    selectedProgressProjectIndex=null;
+    selectedWeeklyProjectIndex=null;
+    selectedCadProjectIndex=null;
+    rebuildProjects();
+    refreshAreaOptions();
+    renderKpis();renderAreaSummary();renderInfo();renderDocs();renderProgressEditor();renderKumulatifEditor();renderWeeklySummary();renderCustomList();
+    renderDashboardExtras();renderCAD();
+    renderMapMarkers();
+    setBranchMessage("Branch tambahan dihapus.",true);
+  }));
+}
+
+let editBranchId=null;
+function setEditMessage(text,state){
+  const el=document.getElementById("branchInfoMessage");
+  el.textContent=text;
+  el.className="form-msg"+(state===true?" ok":state===false?" err":"");
+}
+function showBranchEditor(p){
+  editBranchId=p.id;
+  document.getElementById("branchInfoEditor").style.display="";
+  document.getElementById("branchInfoActions").style.display="";
+  document.getElementById("editBranchName").value=p.branch||"";
+  document.getElementById("editBranchArea").value=p.area||"";
+  document.getElementById("editBranchRo").value=p.ro||"";
+  document.getElementById("editBranchCost").value=p.cost||"";
+  document.getElementById("editBranchTahun").value=p.tahun??"";
+  document.getElementById("editLat").value=Number.isFinite(p.lat)?p.lat:"";
+  document.getElementById("editLng").value=Number.isFinite(p.lng)?p.lng:"";
+  document.getElementById("editBranchSelected").textContent=`Branch dipilih: ${p.branch} · ${p.area||"—"} · CC ${p.cost||"—"}`;
+  setEditMessage(`Mengedit informasi "${p.branch}". Klik Simpan Informasi untuk menyimpan perubahan.`,"");
+}
+function openBranchEditorFor(p){
+  document.getElementById("editBranchSearch").value=p.branch;
+  document.getElementById("editBranchResults").innerHTML="";
+  showBranchEditor(p);
+}
+function setupBranchInfoPicker(){
+  const input=document.getElementById("editBranchSearch");
+  const results=document.getElementById("editBranchResults");
+  const container=input.closest(".branch-picker");
+  let hideTimer=null;
+  const cancelHide=()=>clearTimeout(hideTimer);
+  const scheduleHide=()=>{cancelHide();hideTimer=setTimeout(()=>{results.innerHTML=""},250)};
+  const hideList=()=>{cancelHide();results.innerHTML=""};
+  function renderResults(){
+    const q=input.value.trim().toLowerCase();
+    const matches=projects.filter(p=>!q||matchesSearch(p,q));
+    if(!matches.length){results.innerHTML='<div class="branch-result"><span>Branch tidak ditemukan.</span></div>';return}
+    let html=matches.slice(0,PARTIAL_LIMIT).map(p=>{
+      const coords=hasCoords(p)?` · ${p.lat}, ${p.lng}`:"";
+      return `<button type="button" class="branch-result" data-info-branch="${p.id}">
+        <strong>${safe(p.branch)}</strong>
+        <span>${safe(p.area||"—")} · ${safe(p.ro||"—")} · CC ${safe(p.cost||"—")}${coords}</span>
+      </button>`;
+    }).join("");
+    if(matches.length>PARTIAL_LIMIT)html+=`<div class="branch-result branch-more"><span>Menampilkan ${PARTIAL_LIMIT} dari ${matches.length} branch — ketik untuk mempersempit.</span></div>`;
+    results.innerHTML=html;
+    results.querySelectorAll("[data-info-branch]").forEach(btn=>btn.addEventListener("click",()=>{
+      const p=projects.find(x=>x.id===Number(btn.dataset.infoBranch));
+      if(p){
+        input.value=p.branch;
+        showBranchEditor(p);
+        hideList();
+      }
+    }));
+  }
+  input.addEventListener("focus",renderResults);
+  input.addEventListener("click",renderResults);
+  input.addEventListener("mouseenter",renderResults);
+  input.addEventListener("input",renderResults);
+  input.addEventListener("keydown",e=>{if(e.key==="Escape")hideList()});
+  container.addEventListener("mouseleave",scheduleHide);
+  container.addEventListener("mouseenter",cancelHide);
+  document.addEventListener("mousedown",e=>{if(!container.contains(e.target))hideList()});
+}
+function saveBranchInfo(){
+  if(editBranchId===null)return;
+  const p=projects.find(x=>x.id===editBranchId);
+  if(!p)return;
+  const name=document.getElementById("editBranchName").value.trim();
+  const area=document.getElementById("editBranchArea").value.trim().toUpperCase();
+  const ro=document.getElementById("editBranchRo").value.trim();
+  const cost=document.getElementById("editBranchCost").value.trim();
+  const tahunRaw=document.getElementById("editBranchTahun").value.trim();
+  const latRaw=document.getElementById("editLat").value.trim(),lngRaw=document.getElementById("editLng").value.trim();
+  if(!name){setEditMessage("Nama branch wajib diisi.",false);return}
+  if(!area){setEditMessage("Area wajib diisi (contoh: EAST, WEST, SUMATRA).",false);return}
+  let lat=null,lng=null;
+  if(latRaw!==""||lngRaw!==""){
+    lat=Number(latRaw);lng=Number(lngRaw);
+    if(latRaw===""||lngRaw===""||!isFinite(lat)||!isFinite(lng)||lat<-90||lat>90||lng<-180||lng>180){
+      setEditMessage("Latitude (-90 s/d 90) dan Longitude (-180 s/d 180) harus diisi berpasangan dengan angka yang valid.",false);return;
+    }
+  }
+  let tahun=null;
+  if(tahunRaw!==""){
+    tahun=Number(tahunRaw);
+    if(!Number.isInteger(tahun)||tahun<1900||tahun>2199){setEditMessage("Tahun harus berupa angka 4 digit (contoh: 2026).",false);return}
+  }
+  const dup=projects.find(x=>x.id!==p.id&&normalizeBranch(x.branch)===normalizeBranch(name)&&(x.area||"")===area&&String(x.cost||"").trim().toLowerCase()===cost.toLowerCase());
+  if(dup){setEditMessage("Branch lain dengan nama, area, dan cost center yang sama sudah terdaftar.",false);return}
+  const payload={branch:name,area,ro,cost,tahun,lat,lng};
+  if(p.custom){
+    const c=customBranches.find(x=>x.id===p.id);
+    if(c)Object.assign(c,payload);
+    saveCustomBranches();
+  }else{
+    branchEdits[String(p.id)]={...(branchEdits[String(p.id)]||{}),...payload};
+    saveBranchEdits();
+  }
+  rebuildProjects();
+  refreshAreaOptions();
+  renderKpis();renderAreaSummary();renderInfo();renderCustomList();renderDocs();renderProgressEditor();renderKumulatifEditor();renderWeeklySummary();
+  renderDashboardExtras();renderCAD();
+  renderMapMarkers();
+  const updated=projects.find(x=>x.id===p.id);
+  if(updated)showBranchEditor(updated);
+  setEditMessage(`Informasi "${name}" tersimpan bersama di Google Sheet — nama, area, RO, cost center, tahun, dan koordinat sudah diperbarui${lat!==null&&lng!==null?" · pin lokasi langsung tampil di peta Mapping Plan Project":""}.`,true);
+}
+function viewBranchInfoOnMap(){
+  if(editBranchId===null)return;
+  const p=projects.find(x=>x.id===editBranchId);
+  if(!p)return;
+  const navBtn=document.querySelector('.nav button[data-page="overview"]');
+  if(navBtn)navBtn.click();
+  setTimeout(()=>{if(leafletMap)leafletMap.invalidateSize();showMap(p)},60);
+}
+function cancelBranchInfo(){
+  editBranchId=null;
+  document.getElementById("branchInfoEditor").style.display="none";
+  document.getElementById("branchInfoActions").style.display="none";
+  document.getElementById("editBranchSearch").value="";
+  document.getElementById("editBranchResults").innerHTML="";
+  document.getElementById("editBranchSelected").textContent="Cari dan pilih branch untuk mengedit informasinya.";
+  document.getElementById("branchInfoMessage").textContent="";
+}
+
+function initRekapYear(){
+  const sel=document.getElementById("rekapYearStart");
+  sel.innerHTML='<option value="all">Semua Tahun</option>'+yearOptions.map(y=>`<option value="${y}">${y}</option>`).join("");
+  const saved=getRekapYear();
+  sel.value=saved;
+  if(sel.selectedIndex<0)sel.value="all";
+  sel.addEventListener("change",()=>{
+    try{localStorage.setItem(rekapYearKey,sel.value)}catch(e){}
+    renderAreaSummary();
+  });
+}
+
+function xmlEsc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;")}
+function xmlRow(cells){
+  return `<Row>${cells.map(c=>{
+    if(c===null||c===undefined||c==="")return "<Cell/>";
+    if(typeof c==="object"){
+      if(c.header)return `<Cell ss:StyleID="sHeader"><Data ss:Type="String">${xmlEsc(c.v)}</Data></Cell>`;
+      if(c.t==="n")return `<Cell><Data ss:Type="Number">${Number(c.v)}</Data></Cell>`;
+      return `<Cell><Data ss:Type="String">${xmlEsc(c.v)}</Data></Cell>`;
+    }
+    return `<Cell><Data ss:Type="String">${xmlEsc(c)}</Data></Cell>`;
+  }).join("")}</Row>`;
+}
+function xmlSheet(name,headers,rows){
+  return `<Worksheet ss:Name="${xmlEsc(name)}"><Table>${xmlRow(headers.map(v=>({v,header:true})))}${rows.map(r=>xmlRow(r)).join("")}</Table></Worksheet>`;
+}
+function buildAllDataXml(){
+  const now=new Date().toLocaleString("id-ID",{day:"2-digit",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  const sheets=[];
+  const doneAll=projects.filter(p=>isProjectDone(p)).length;
+  const planningAll=projects.filter(p=>isProjectPlanning(p)).length;
+  const renovDoneAll=projects.filter(p=>cumulativeFor(p).renovation>=99.999).length;
+  sheets.push(xmlSheet("Ringkasan",["Keterangan","Nilai"],[
+    [{v:"Tanggal export",t:"s"},{v:now,t:"s"}],
+    [{v:"Total project",t:"s"},{v:projects.length,t:"n"}],
+    [{v:"Project Done (kumulatif 100%)",t:"s"},{v:doneAll,t:"n"}],
+    [{v:"Renovasi Konstruksi 100% (tanpa kumulatif)",t:"s"},{v:renovDoneAll,t:"n"}],
+    [{v:"Planning (kumulatif 0%)",t:"s"},{v:planningAll,t:"n"}],
+    [{v:"On Progress",t:"s"},{v:projects.length-doneAll-planningAll,t:"n"}],
+    [{v:"Rumus total kumulatif",t:"s"},{v:"Renovasi Konstruksi x 85% + Perangkat Networks x 5% + Project Backbone x 5% + SPOP Live x 5%",t:"s"}]
+  ]));
+  sheets.push(xmlSheet("Data Branch",["No","Branch","Area","Regional Office","Cost Center","Latitude","Longitude","Tahun","Sumber Data"],
+    projects.map(p=>[
+      {v:p.id,t:"n"},{v:p.branch,t:"s"},{v:p.area||"",t:"s"},{v:p.ro||"",t:"s"},{v:p.cost||"",t:"s"},
+      hasCoords(p)?{v:p.lat,t:"n"}:"",hasCoords(p)?{v:p.lng,t:"n"}:"",
+      p.tahun?{v:p.tahun,t:"n"}:"", {v:p.custom?"Tambahan":"Bawaan",t:"s"}
+    ])));
+  sheets.push(xmlSheet("Pra-Konstruksi",["Branch","Tahun","Informasi Ruko","Survey / Aanwijzing","Keterangan Gambar (CAD)","Negosiasi","PR / PO Renovasi","Start Renovasi","Deadline","Nomor PO","PIC Facility Project"],
+    projects.map(p=>{
+      const cadStatus=cadStatusSummary(p);
+      return [
+        {v:p.branch,t:"s"},p.tahun?{v:p.tahun,t:"n"}:"",
+        {v:infoValue(p,"ruko",defaultRuko(p)),t:"s"},
+        {v:infoValue(p,"survey",defaultStage(p)),t:"s"},
+        {v:cadStatus||"Belum ada data CAD",t:"s"},
+        {v:infoValue(p,"negosiasi",defaultStage(p)),t:"s"},
+        {v:infoValue(p,"prpo",defaultStage(p)),t:"s"},
+        {v:infoValue(p,"startRenovasi",""),t:"s"},
+        {v:infoValue(p,"deadline",""),t:"s"},
+        {v:infoValue(p,"nomorPo",""),t:"s"},
+        {v:infoValue(p,"pic",""),t:"s"}
+      ];
+    })));
+  sheets.push(xmlSheet("CAD",["Branch","Tanggal Request","Tanggal Update","Keterangan Progress","Nama PIC","Status Gambar","Revisi/Comment User","Tanggal Comment","File PDF"],
+    projects.flatMap(p=>{
+      const list=cadEntries(p);
+      if(!list.length)return [[{v:p.branch,t:"s"},"","","","","","","","Belum ada data"]];
+      return list.map(e=>{
+        const meta=cadFileMeta(cadImageKey(p,e));
+        return [
+          {v:p.branch,t:"s"},
+          {v:e.tanggalRequest||"",t:"s"},
+          {v:e.tanggalUpdate||"",t:"s"},
+          {v:e.keterangan||"",t:"s"},
+          {v:e.pic||"",t:"s"},
+          {v:cadEntryStatus(p,e),t:"s"},
+          {v:e.userComment||"",t:"s"},
+          {v:fmtFileStamp(e.commentAt)||"",t:"s"},
+          {v:meta&&meta.data?"Ada":"Belum ada",t:"s"}
+        ];
+      });
+    })));
+  sheets.push(xmlSheet("Rekap PIC CAD",["Nama PIC","On Progress","Total Done","Branch yang Sudah Dikerjakan"],
+    picCadRecaps().map(r=>[
+      {v:r.name,t:"s"},
+      {v:r.onProgress,t:"n"},
+      {v:r.done,t:"n"},
+      {v:[...r.branches.entries()].map(([bn,c])=>`${bn} (${c.onProgress} On Progress / ${c.done} Done)`).join(" | "),t:"s"}
+    ])));
+  sheets.push(xmlSheet("Progress Renovasi",["Branch",...items.flatMap(i=>[`${i.label} - Status`,`${i.label} - Keterangan`]),"Total Progress Renovasi (%)"],
+    projects.map(p=>{
+      const st=statusesFor(p);
+      return [{v:p.branch,t:"s"},...items.flatMap(i=>[{v:st[i.key]||"None",t:"s"},{v:noteFor(p,i),t:"s"}]),{v:Number(renovationPercent(p).toFixed(2)),t:"n"}];
+    })));
+  sheets.push(xmlSheet("Progress Kumulatif",["Branch","Renovasi Konstruksi (%)","Perangkat Networks - Status","Perangkat Networks (%)","Project Backbone - Status","Project Backbone (%)","SPOP Live - Status","SPOP Live (%)","Total Progress Kumulatif (%)","Status Project"],
+    projects.map(p=>{
+      const s=cumulativeFor(p),st=kumulatifFor(p);
+      return [
+        {v:p.branch,t:"s"},
+        {v:Number(s.renovation.toFixed(2)),t:"n"},
+        {v:st.networks,t:"s"},{v:Number(s.networks.toFixed(2)),t:"n"},
+        {v:st.backbone,t:"s"},{v:Number(s.backbone.toFixed(2)),t:"n"},
+        {v:st.spopLive,t:"s"},{v:Number(s.spopLive.toFixed(2)),t:"n"},
+        {v:Number(s.total.toFixed(2)),t:"n"},
+        {v:projectStatus(s.total),t:"s"}
+      ];
+    })));
+  sheets.push(xmlSheet("Dokumentasi",["Branch","Facade","Store","SPOP","Office"],
+    projects.map(p=>[{v:p.branch,t:"s"},...photoTypes.map(t=>({v:photoEntry(photoKey(p,t))?"Ada":"Belum ada",t:"s"}))])));
+  const areas=[];
+  projects.forEach(p=>{if(p.area&&!areas.includes(p.area))areas.push(p.area)});
+  const rekapGroups=[...areas.map(a=>({title:a,list:projects.filter(p=>p.area===a)})),{title:"TOTAL KESELURUHAN",list:projects}];
+  sheets.push(xmlSheet("Rekap Area",["Area","Total Branch","Planning","On Progress","Selesai","Planning (%)","On Progress (%)","Selesai (%)"],
+    rekapGroups.map(g=>{
+      const total=g.list.length;
+      const done=g.list.filter(p=>isProjectDone(p)).length;
+      const planning=g.list.filter(p=>isProjectPlanning(p)).length;
+      const onp=total-done-planning;
+      return [
+        {v:g.title,t:"s"},{v:total,t:"n"},{v:planning,t:"n"},{v:onp,t:"n"},{v:done,t:"n"},
+        {v:total?Number((planning/total*100).toFixed(2)):0,t:"n"},
+        {v:total?Number((onp/total*100).toFixed(2)):0,t:"n"},
+        {v:total?Number((done/total*100).toFixed(2)):0,t:"n"}
+      ];
+    })));
+  return `<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="Default" ss:Name="Normal"><Alignment ss:Vertical="Top" ss:WrapText="1"/></Style><Style ss:ID="sHeader"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#0B246B" ss:Pattern="Solid"/></Style></Styles>${sheets.join("")}</Workbook>`;
+}
+function downloadAllData(){
+  try{
+    const stamp=new Date();
+    const pad=n=>String(n).padStart(2,"0");
+    const fileName=`Biznet-Facility-Project-Data-${stamp.getFullYear()}${pad(stamp.getMonth()+1)}${pad(stamp.getDate())}-${pad(stamp.getHours())}${pad(stamp.getMinutes())}.xls`;
+    const blob=new Blob(["\ufeff"+buildAllDataXml()],{type:"application/vnd.ms-excel;charset=utf-8"});
+    const link=document.createElement("a");
+    link.href=URL.createObjectURL(blob);
+    link.download=fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(link.href),2000);
+  }catch(e){
+    alert("Export data gagal. Coba kembali atau gunakan browser lain.");
+  }
+}
+
+document.getElementById("downloadWeeklyReport").addEventListener("click",downloadWeeklyReport);
+document.getElementById("downloadAllDataButton").addEventListener("click",downloadAllData);
+document.getElementById("overviewBranchSearch").addEventListener("input",renderOverviewSearch);
+document.getElementById("infoSearch").addEventListener("input",renderInfo);
+document.getElementById("infoSort").addEventListener("change",renderInfo);
+document.getElementById("addBranchButton").addEventListener("click",addBranch);
+document.getElementById("saveBranchInfoButton").addEventListener("click",saveBranchInfo);
+document.getElementById("viewBranchInfoMapButton").addEventListener("click",viewBranchInfoOnMap);
+document.getElementById("cancelBranchInfoButton").addEventListener("click",cancelBranchInfo);
+document.getElementById("progressSubmitItemButton").addEventListener("click",()=>{
+  const p=selectedProgressProjectIndex!==null?projects[selectedProgressProjectIndex]:null;
+  submitStores([storageKey,manualKumulatifKey,notesKey],"Progress Renovasi Project",document.getElementById("progressSubmitItemMessage"),p?p.branch:null);
+});
+document.getElementById("progressSubmitButton").addEventListener("click",()=>{
+  const p=selectedProgressProjectIndex!==null?projects[selectedProgressProjectIndex]:null;
+  submitStores([storageKey,manualKumulatifKey,notesKey],"Progress Renovasi Project",document.getElementById("progressSubmitMessage"),p?p.branch:null);
+});
+document.getElementById("cadSubmitButton").addEventListener("click",submitCadData);
+
+const titles={overview:"BIZNET FACILITY PROJECT REPORT",info:"Informasi Project",cad:"CAD",progress:"Progress Renovasi Project",docs:"Dokumentasi Project",weekly:"Weekly Report Project"};
+document.querySelectorAll(".nav button").forEach(button=>button.addEventListener("click",()=>{
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  button.classList.add("active");
+  document.getElementById(button.dataset.page).classList.add("active");
+  document.getElementById("heading").textContent=titles[button.dataset.page];
+  if(button.dataset.page==="overview"&&leafletMap)setTimeout(()=>leafletMap.invalidateSize(),60);
+  if(button.dataset.page==="progress"){renderProgressEditor();renderKumulatifEditor();}
+  if(button.dataset.page==="cad"){renderCAD();}
+  if(button.dataset.page==="weekly"){renderWeeklySummary();}
+}));
+
+loadSharedThumbs();
+rebuildProjects();
+refreshAreaOptions();
+initRekapYear();
+initializeBranchSelects();
+setupBranchInfoPicker();
+setupOverviewSearch();
+setupInfoSearchPicker();
+setupCadPicker();
+initDriveTools();
+initDashboardExtras();
+initLeafletMap();
+renderKpis();
+renderAreaSummary();
+renderInfo();
+renderDocs();
+renderProgressEditor();
+renderKumulatifEditor();
+renderWeeklySummary();
+renderCustomList();
+renderCAD();
+initRemoteSync();
+</script>
+</body>
+</html>
